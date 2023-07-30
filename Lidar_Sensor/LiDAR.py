@@ -21,6 +21,7 @@ def logdata(text): # 데이터를 로깅할 때 사용
     try:
         t = datetime.today().isoformat(sep=' ', timespec='milliseconds')
         f.write(f'[{t}] {text}')
+        f.write('\n')
     except:
         print("An error has been generated while inserting log data")
         return
@@ -39,6 +40,7 @@ print (f'>> Module {MODULENO} Connected!')
 
 def send_data(data): # data는 string type으로 보내자!!!!
     client_socket.send(f'{MODULENO}{data}'.encode())
+    logdata(f'sended {MODULENO}{data} to server')
 
 ############################### Module Code #################################
 
