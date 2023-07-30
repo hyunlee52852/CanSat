@@ -32,7 +32,6 @@ logdata("Log file generated")
 
 #ser = serial.Serial("/dev/serial0", 115200) # 지상국과의 통신을 위해 Serial port 지정
 
-
 packet = {"MSG_ID":None,
           "SEQ":None,
           "Length":None,
