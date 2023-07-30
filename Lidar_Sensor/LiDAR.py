@@ -3,14 +3,34 @@ import serial
 import time
 import socket
 from _thread import *
+from datetime import datetime
+
 
 ################ Module의 기본 설정 데이터들 ################
 
 ser = serial.Serial("/dev/serial0", 115200) # Module의 통신 포트
 
+MODULENAME = "LIDAR" # 모듈의 이름
 HOST = '127.0.0.1' # Main server의 주소
 PORT = 9999 # Main server과 연결할 포트
 MODULENO = 0 ## 모듈 번호에 알맞게 바꾸기
+
+################ Logging System ################
+
+def logdata(text): # 데이터를 로깅할 때 사용
+    try:
+        t = datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        f.write(f'[{t}] {text}')
+    except:
+        print("An error has been generated while inserting log data")
+        return
+
+try:
+    f = open(f'./Logs/{MODULENAME}.txt', 'a') # 로그를 저장할 파일을 오픈
+    logdata("Log file generated")
+except:
+    print("An Exception has been generated while opening log data")
+
 
 ################################ Main Comms ##################################
 # 메인 서버와 통신을 시도한다
@@ -49,6 +69,8 @@ def getTFminiData():
             #sys.version[0] == '3'    #True, python3
 
 
+
+
 if __name__ == '__main__':
     try:
         if ser.is_open == False:
@@ -59,3 +81,4 @@ if __name__ == '__main__':
         if ser != None:
             ser.close()
         client_socket.close()
+        f.close()
