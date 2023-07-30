@@ -67,8 +67,6 @@ def getTFminiData():
             #sys.version[0] == '3'    #True, python3
 
 
-
-
 if __name__ == '__main__':
     try:
         if ser.is_open == False:
