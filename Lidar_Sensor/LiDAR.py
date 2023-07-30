@@ -25,7 +25,7 @@ def logdata(text): # 데이터를 로깅할 때 사용
         print("An error has been generated while inserting log data")
         return
 
-f = open(f'./Logs/{MODULENAME}.txt', 'a') # 로그를 저장할 파일을 오픈
+f = open(f'./{MODULENAME}.txt', 'a') # 로그를 저장할 파일을 오픈
 logdata("Log file generated")
 
 ################################ Main Comms ##################################
