@@ -5,7 +5,9 @@ import time
 import socket
 from _thread import *
 from datetime import datetime
+import RPi.GPIO as GPIO
 
+GPIO.cleanup() # cleanup all GPIO 
 
 ################ Module의 기본 설정 데이터들 ################
 
