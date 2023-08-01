@@ -55,7 +55,7 @@ def sendpacket():
 
 
 def threaded(client_socket, addr):
-    logdata('>> Connected by :', addr[0], ':', addr[1])
+    logdata(f'>> Connected by : {addr[0]} : {addr[1]}')
     moduleno=int(client_socket.recv(1024).decode()) # 모듈과 연결된 후 첫 데이터는 1자리 숫자이고, 그 숫자는 각 모듈의 고유 번호임
     module_active[moduleno] = 1 # 그 모듈이 연결되었음을 표시
     logdata(f'module number {moduleno} is active!')
@@ -67,11 +67,11 @@ def threaded(client_socket, addr):
             data = client_socket.recv(1024)
 
             if not data:
-                logdata('>> Disconnected by ' + addr[0], ':', addr[1])
+                logdata(f'>> Disconnected by {addr[0]} : {addr[1]}')
                 module_active[moduleno] = 0 # 그 모듈의 연결이 끊겼음을 표시
                 break
 
-            logdata('>> Received from ' + addr[0], ':', addr[1], data.decode())
+            logdata(f'>> Received from  + {addr[0]} : {addr[1]}, {data.decode()}')
             addpacketdata(int(data.decode()[0]), int(data.decode()[1:]))
 
             # 서버에 접속한 클라이언트들에게 채팅 보내기
@@ -81,13 +81,13 @@ def threaded(client_socket, addr):
                     client.send(data)
 
         except ConnectionResetError as e:
-            logdata('>> Disconnected by ' + addr[0], ':', addr[1])
+            logdata(f'>> Disconnected by {addr[0]} : {addr[1]}')
             module_active[moduleno] = 0 # 그 모듈의 연결이 끊겼음을 표시
             break
 
     if client_socket in client_sockets :
         client_sockets.remove(client_socket)
-        logdata('remove client list : ',len(client_sockets))
+        logdata(f'remove client list : {len(client_sockets)}')
 
     client_socket.close()
 
@@ -114,7 +114,7 @@ try:
         logdata(f"참가자 수 : {len(client_sockets)}")
         
 except Exception as e :
-    logdata ('에러는? : ',e)
+    logdata (f'에러는? : {e}')
 
 finally:
     server_socket.close()
