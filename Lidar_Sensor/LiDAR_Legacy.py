@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*
 import serial
-import pigpio
 import time
 import socket
 from _thread import *
@@ -9,11 +8,7 @@ from datetime import datetime
 
 ################ Module의 기본 설정 데이터들 ################
 
-RX = 23 # Raspi의 GPIO 23번포트를 사용한다
-
-pi = pigpio.pi()
-pi.set_mode(RX, pigpio.INPUT)
-pi.bb_serial_read_open(RX, 115200) 
+ser = serial.Serial("/dev/serial0", 115200) # Module의 통신 포트
 
 MODULENAME = "LIDAR" # 모듈의 이름
 HOST = '127.0.0.1' # Main server의 주소
@@ -50,32 +45,36 @@ def send_data(data): # data는 string type으로 보내자!!!!
 ############################### Module Code #################################
 
 def getTFminiData():
-  while True:
-    #print("#############")
-    time.sleep(0.05)	#change the value if needed
-    (count, recv) = pi.bb_serial_read(RX)
-    if count > 8:
-      for i in range(0, count-9):
-        if recv[i] == 89 and recv[i+1] == 89: # 0x59 is 89
-          checksum = 0
-          for j in range(0, 8):
-            checksum = checksum + recv[i+j]
-          checksum = checksum % 256
-          if checksum == recv[i+8]:
-            distance = recv[i+2] + recv[i+3] * 256
-            strength = recv[i+4] + recv[i+5] * 256
-            if distance <= 1200 and strength < 2000:
-              print(distance, strength) 
-            #else:
-              # raise ValueError('distance error: %d' % distance)	
-            #i = i + 9
+    while True:
+        #time.sleep(0.1)
+        count = ser.in_waiting
+        if count > 8:
+            recv = ser.read(9)
+            ser.reset_input_buffer()
+            # type(recv), 'str' in python2(recv[0] = 'Y'), 'bytes' in python3(recv[0] = 89)
+            # type(recv[0]), 'str' in python2, 'int' in python3
+
+            if recv[0] == 0x59 and recv[1] == 0x59:     #python3
+                distance = recv[2] + recv[3] * 256
+                strength = recv[4] + recv[5] * 256
+                send_data(distance) # 데이터 보내기
+                print('(', distance, ',', strength, ')')
+                ser.reset_input_buffer()
+
+            # you can also distinguish python2 and python3:
+            #import sys
+            #sys.version[0] == '2'    #True, python2
+            #sys.version[0] == '3'    #True, python3
 
 
 if __name__ == '__main__':
-  try:
-    getTFminiData()
-  except:  
-    pi.bb_serial_read_close(RX)
-    pi.stop()
-    client_socket.close()
-    f.close()
+    try:
+        if ser.is_open == False:
+            ser.open()
+        getTFminiData()
+    except KeyboardInterrupt:   # Ctrl+C
+        print('exit')
+        if ser != None:
+            ser.close()
+        client_socket.close()
+        f.close()
