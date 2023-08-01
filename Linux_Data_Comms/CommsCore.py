@@ -14,7 +14,6 @@ packet_count = 0
 module_active = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 ################ Logging System ################
-
 def logdata(text): # 데이터를 로깅할 때 사용
     try:
         t = datetime.today().isoformat(sep=' ', timespec='milliseconds')
@@ -112,7 +111,7 @@ try:
         client_socket, addr = server_socket.accept()
         client_sockets.append(client_socket)
         start_new_thread(threaded, (client_socket, addr))
-        logdata("참가자 수 : ", len(client_sockets))
+        logdata(f"참가자 수 : {len(client_sockets)}")
         
 except Exception as e :
     logdata ('에러는? : ',e)
