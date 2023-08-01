@@ -65,6 +65,7 @@ def getTFminiData():
             distance = recv[i+2] + recv[i+3] * 256
             strength = recv[i+4] + recv[i+5] * 256
             if distance <= 1200 and strength < 2000:
+              send_data(distance)
               print(distance, strength) 
             #else:
               # raise ValueError('distance error: %d' % distance)	
