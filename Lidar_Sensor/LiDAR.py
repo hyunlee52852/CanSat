@@ -7,15 +7,15 @@ from _thread import *
 from datetime import datetime
 import RPi.GPIO as GPIO
 
-GPIO.cleanup() # cleanup all GPIO 
+GPIO.cleanup() # cleanup all GPIO
 
 ################ Module의 기본 설정 데이터들 ################
 
-RX = 23 # Raspi의 GPIO 23번포트를 사용한다
+RX = 25 # Raspi의 GPIO 23번포트를 사용한다
 
 pi = pigpio.pi()
 pi.set_mode(RX, pigpio.INPUT)
-pi.bb_serial_read_open(RX, 115200) 
+pi.bb_serial_read_open(RX, 115200)
 
 MODULENAME = "LIDAR" # 모듈의 이름
 HOST = '127.0.0.1' # Main server의 주소
@@ -53,31 +53,33 @@ def send_data(data): # data는 string type으로 보내자!!!!
 
 def getTFminiData():
   while True:
-    #print("#############")
+    print("#############")
     time.sleep(0.05)	#change the value if needed
     (count, recv) = pi.bb_serial_read(RX)
+    print(recv)
     if count > 8:
       for i in range(0, count-9):
         if recv[i] == 89 and recv[i+1] == 89: # 0x59 is 89
           checksum = 0
+          print('a')
           for j in range(0, 8):
             checksum = checksum + recv[i+j]
           checksum = checksum % 256
           if checksum == recv[i+8]:
             distance = recv[i+2] + recv[i+3] * 256
             strength = recv[i+4] + recv[i+5] * 256
-            if distance <= 1200 and strength < 2000:
+            if distance <= 1200:
               send_data(distance)
-              print(distance, strength) 
+              print(distance, strength)
             #else:
-              # raise ValueError('distance error: %d' % distance)	
+              # raise ValueError('distance error: %d' % distance)
             #i = i + 9
 
 
 if __name__ == '__main__':
   try:
     getTFminiData()
-  except:  
+  except:
     pi.bb_serial_read_close(RX)
     pi.stop()
     client_socket.close()
