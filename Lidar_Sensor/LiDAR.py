@@ -14,6 +14,7 @@ GPIO.cleanup() # cleanup all GPIO
 RX = 23 # Raspi의 GPIO 23번포트를 사용한다
 
 pi = pigpio.pi()
+pi.bb_serial_read_close()
 pi.set_mode(RX, pigpio.INPUT)
 pi.bb_serial_read_open(RX, 115200) 
 
@@ -73,11 +74,11 @@ def getTFminiData():
               # raise ValueError('distance error: %d' % distance)	
             #i = i + 9
 
-
 if __name__ == '__main__':
   try:
     getTFminiData()
-  except:  
+  except KeyboardInterrupt:
+    print("Keyboard Interrupted!!!!!")  
     pi.bb_serial_read_close(RX)
     pi.stop()
     client_socket.close()
