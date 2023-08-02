@@ -28,7 +28,7 @@ logdata("Log file generated")
 
 ############ Serial Communication #############
 
-ser = serial.Serial("/dev/serial0", 115200) # 지상국과의 통신을 위해 Serial port 지정
+ser = serial.Serial("/dev/serial0", 9600) # 지상국과의 통신을 위해 Serial port 지정
 
 packet = {"MSG_ID":None,
           "SEQ":None,
@@ -54,9 +54,9 @@ def sendpacket(): # 패킷을 보내는 코드
         logdata(sendstr)
         packet['Packet_Count'] += 1
 
-        ser.write(sendstr) # 지상국에 serial 보내기
+        ser.write(sendstr.encode()) # 지상국에 serial 보내기
 
-        time.sleep(1)
+        time.sleep(0.5)
 
 ##################################################
 
@@ -118,7 +118,7 @@ try:
         client_sockets.append(client_socket)
         start_new_thread(threaded, (client_socket, addr))
         logdata(f"참가자 수 : {len(client_sockets)}")
-        
+
 except Exception as e :
     logdata (f'에러는? : {e}')
 
