@@ -7,6 +7,12 @@ from _thread import *
 from datetime import datetime
 import RPi.GPIO as GPIO
 
+pin1 = 27
+pin2= 22
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(pin1, GPIO.OUT)
+GPIO.setup(pin2, GPIO.OUT)
 
 ################ Module의 기본 설정 데이터들 ################
 
@@ -75,6 +81,15 @@ def getTFminiData():
             if distance <= 1200:
               send_data(distance)
               print(distance, strength)
+              if distance >= 20 and distance <= 100:
+                  GPIO.output(pin2, GPIO.HIGH)
+                  GPIO.output(pin1, GPIO.LOW)
+              elif  distance < 20:
+                  GPIO.output(pin2, GPIO.LOW)
+                  GPIO.output(pin1, GPIO.HIGH)
+              else:
+                  GPIO.output(pin1, GPIO.LOW)
+                  GPIO.output(pin2, GPIO.LOW)
             #else:
               # raise ValueError('distance error: %d' % distance)
             #i = i + 9
@@ -88,3 +103,4 @@ if __name__ == '__main__':
     pi.stop()
     client_socket.close()
     f.close()
+    GPIO.cleanup()
