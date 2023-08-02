@@ -10,7 +10,6 @@ MODULENAME = "CORE"
 HOST = '127.0.0.1'
 PORT = 9999
 
-packet_count = 0
 module_active = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 ################ Logging System ################
@@ -29,14 +28,15 @@ logdata("Log file generated")
 
 ############ Serial Communication #############
 
-#ser = serial.Serial("/dev/serial0", 115200) # 지상국과의 통신을 위해 Serial port 지정
+ser = serial.Serial("/dev/serial0", 115200) # 지상국과의 통신을 위해 Serial port 지정
 
 packet = {"MSG_ID":None,
           "SEQ":None,
           "Length":None,
           "Timestamp":None,
           "Module_Stat":None,
-          "LiDAR_Dist":None
+          "LiDAR_Dist":None,
+          "Packet_Count":1
           }
 
 def addpacketdata(moduleno, data):
@@ -44,15 +44,21 @@ def addpacketdata(moduleno, data):
         logdata('add')
         packet['LiDAR_Dist'] = data
 
-def sendpacket():
+def sendpacket(): # 패킷을 보내는 코드
     while True:
         packet['Module_Stat'] = ''
         for i in module_active:
             packet['Module_Stat'] += str(i)
+        curtime = datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        sendstr = f"/*{packet['Packet_Count']},{curtime},{packet['Module_Stat']},{packet['LiDAR_Dist']}*/" # 지상국에 보낼 메세지
+        logdata(sendstr)
+        packet['Packet_Count'] += 1
 
-        logdata(packet)
+        ser.write(sendstr) # 지상국에 serial 보내기
+
         time.sleep(1)
 
+##################################################
 
 def threaded(client_socket, addr):
     logdata(f'>> Connected by : {addr[0]} : {addr[1]}')
