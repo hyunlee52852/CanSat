@@ -7,16 +7,15 @@ from _thread import *
 from datetime import datetime
 import RPi.GPIO as GPIO
 
-GPIO.cleanup() # cleanup all GPIO 
 
 ################ Module의 기본 설정 데이터들 ################
 
 RX = 23 # Raspi의 GPIO 23번포트를 사용한다
 
 pi = pigpio.pi()
-pi.bb_serial_read_close()
+#pi.bb_serial_read_close(RX)
 pi.set_mode(RX, pigpio.INPUT)
-pi.bb_serial_read_open(RX, 115200) 
+pi.bb_serial_read_open(RX, 115200)
 
 MODULENAME = "LIDAR" # 모듈의 이름
 HOST = '127.0.0.1' # Main server의 주소
@@ -69,16 +68,16 @@ def getTFminiData():
             strength = recv[i+4] + recv[i+5] * 256
             if distance <= 1200:
               send_data(distance)
-              print(distance, strength) 
+              print(distance, strength)
             #else:
-              # raise ValueError('distance error: %d' % distance)	
+              # raise ValueError('distance error: %d' % distance)
             #i = i + 9
 
 if __name__ == '__main__':
   try:
     getTFminiData()
   except KeyboardInterrupt:
-    print("Keyboard Interrupted!!!!!")  
+    print("Keyboard Interrupted!!!!!")
     pi.bb_serial_read_close(RX)
     pi.stop()
     client_socket.close()
