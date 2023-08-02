@@ -13,8 +13,14 @@ import RPi.GPIO as GPIO
 RX = 23 # Raspi의 GPIO 23번포트를 사용한다
 
 pi = pigpio.pi()
-#pi.bb_serial_read_close(RX)
-pi.set_mode(RX, pigpio.INPUT)
+try:
+    pi.set_mode(RX, pigpio.INPUT)
+except:
+    print("Port Already in Use, Reinitalizing Port")
+    pi.bb_serial_read_close(RX)
+    pi.set_mode(RX,pigpio.INPUT)
+
+#pi.set_mode(RX, pigpio.INPUT)
 pi.bb_serial_read_open(RX, 115200)
 
 MODULENAME = "LIDAR" # 모듈의 이름
