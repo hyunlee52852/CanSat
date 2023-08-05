@@ -443,20 +443,20 @@ while True:
     xG = (ACCy * 0.244)/1000 # X accel in G (9.8m/s)
     zG = (ACCz * 0.244)/1000 # Z accel in G (9.8m/s)
 
-    yms = math.round(yG / 9.8, 2) # Y accel in m/s^2
-    xms = math.round(xG / 9.8, 2) # X accel in m/s^2
-    zms = math.round(zG / 9.8, 2) # Z accel in m/s^2
+    yms = round(yG / 9.8, 2) # Y accel in m/s^2
+    xms = round(xG / 9.8, 2) # X accel in m/s^2
+    zms = round(zG / 9.8, 2) # Z accel in m/s^2
 
-    gyrooutX = math.round(gyroXangle, 2)
-    gyrooutY = math.round(gyroYangle, 2)
-    gyrooutZ = math.round(gyroZangle, 2)
+    gyrooutX = round(gyroXangle, 2)
+    gyrooutY = round(gyroYangle, 2)
+    gyrooutZ = round(gyroZangle, 2)
     sendcnt += 1
     if sendcnt >= 30 : # 30 이면 > 0.9초마다
         print(f'Accel (m/s^2) >>> X : {xms} Y : {yms} Z : {zms}')
         print(f'Gyro (degrees) >>> X : {gyrooutX} Y : {gyrooutY} Z : {gyrooutZ}')
         
         send_data(f'{xms},{yms},{zms},{gyrooutX},{gyrooutY},{gyrooutZ}')
-        
+
         sendcnt = 0
 
     #slow program down a bit, makes the output more readable
