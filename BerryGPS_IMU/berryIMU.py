@@ -23,8 +23,8 @@ import IMU
 import datetime
 import os
 import socket
+from _thread import *
 
-sendcnt = 0 # 너무 데이터를 많이 보내서 보내는 주기 조절하기
 
 ################### Comms code ###################
 MODULENAME = "BerryGPS_IMU" # 모듈의 이름
@@ -58,8 +58,25 @@ def logdata(text): # 데이터를 로깅할 때 사용
 f = open(f'./{MODULENAME}.txt', 'a') # 로그를 저장할 파일을 오픈
 logdata("Log file generated")
 
+############ 주기적으로 데이터 보내는 코드 ############
+yms = 0
+xms = 0
+zms = 0
+
+gyrooutX = 0
+gyrooutY = 0
+gyrooutZ = 0
+
+def send_on_period():
+    while True:
+        time.sleep(0.5)
+        print(f'Accel (m/s^2) >>> X : {xms} Y : {yms} Z : {zms}')
+        print(f'Gyro (degrees) >>> X : {gyrooutX} Y : {gyrooutY} Z : {gyrooutZ}')
+
+        send_data(f'{xms},{yms},{zms},{gyrooutX},{gyrooutY},{gyrooutZ}')
 
 
+##################################
 
 RAD_TO_DEG = 57.29578
 M_PI = 3.14159265358979323846
@@ -229,6 +246,8 @@ if(IMU.BerryIMUversion == 99):
     sys.exit()
 IMU.initIMU()       #Initialise the accelerometer, gyroscope and compass
 
+
+start_new_thread(send_on_period, ())
 
 while True:
 
@@ -449,14 +468,5 @@ while True:
     gyrooutX = round(gyroXangle, 2) % 360
     gyrooutY = round(gyroYangle, 2) % 360
     gyrooutZ = round(gyroZangle, 2) % 360
-    sendcnt += 1
-    if sendcnt >= 30 : # 30 이면 > 0.9초마다
-        print(f'Accel (m/s^2) >>> X : {xms} Y : {yms} Z : {zms}')
-        print(f'Gyro (degrees) >>> X : {gyrooutX} Y : {gyrooutY} Z : {gyrooutZ}')
-
-        send_data(f'{xms},{yms},{zms},{gyrooutX},{gyrooutY},{gyrooutZ}')
-
-        sendcnt = 0
-
     #slow program down a bit, makes the output more readable
     time.sleep(0.03)
