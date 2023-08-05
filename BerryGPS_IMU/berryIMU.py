@@ -16,13 +16,50 @@
 #    http://ozzmaker.com/
 
 
-
 import sys
 import time
 import math
 import IMU
 import datetime
 import os
+import socket
+
+
+
+sendcnt = 0 # 너무 데이터를 많이 보내서 보내는 주기 조절하기
+
+################### Comms code ###################
+MODULENAME = "BerryGPS_IMU" # 모듈의 이름
+HOST = '127.0.0.1' # Main server의 주소
+PORT = 9999 # Main server과 연결할 포트
+MODULENO = 1 ## 모듈 번호에 알맞게 바꾸기
+
+client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+client_socket.connect((HOST, PORT))
+
+client_socket.send(f'{MODULENO}'.encode()) ## 통신이 성사되면 모듈 번호를 보낸다
+
+print (f'>> Module {MODULENO} Connected!')
+
+def send_data(data): # data는 string type으로 보내자!!!!
+    client_socket.send(f'{MODULENO}{data}'.encode())
+    logdata(f'sended {MODULENO}{data} to server')
+
+################ Logging System ################
+
+def logdata(text): # 데이터를 로깅할 때 사용
+    try:
+        t = datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        f.write(f'[{t}] {text}')
+        f.write('\n')
+    except:
+        print("An error has been generated while inserting log data")
+        return
+
+f = open(f'./{MODULENAME}.txt', 'a') # 로그를 저장할 파일을 오픈
+logdata("Log file generated")
+
+
 
 
 RAD_TO_DEG = 57.29578
@@ -406,11 +443,21 @@ while True:
     xG = (ACCy * 0.244)/1000 # X accel in G (9.8m/s)
     zG = (ACCz * 0.244)/1000 # Z accel in G (9.8m/s)
 
-    yms = yG / 9.8 # Y accel in m/s^2
-    xms = xG / 9.8 # X accel in m/s^2
-    zms = zG / 9.8 # Z accel in m/s^2
+    yms = math.round(yG / 9.8, 2) # Y accel in m/s^2
+    xms = math.round(xG / 9.8, 2) # X accel in m/s^2
+    zms = math.round(zG / 9.8, 2) # Z accel in m/s^2
 
-    print(f'Accel (m/s^2) >>> X : {xms} Y : {yms} Z : {zms}')
-    print(f'Gyro (degrees) >>> X : {gyroXangle} Y : {gyroYangle} Z : {gyroZangle}')
+    gyrooutX = math.round(gyroXangle, 2)
+    gyrooutY = math.round(gyroYangle, 2)
+    gyrooutZ = math.round(gyroZangle, 2)
+    sendcnt += 1
+    if sendcnt >= 30 : # 30 이면 > 0.9초마다
+        print(f'Accel (m/s^2) >>> X : {xms} Y : {yms} Z : {zms}')
+        print(f'Gyro (degrees) >>> X : {gyrooutX} Y : {gyrooutY} Z : {gyrooutZ}')
+        
+        send_data(f'{xms},{yms},{zms},{gyrooutX},{gyrooutY},{gyrooutZ}')
+        
+        sendcnt = 0
+
     #slow program down a bit, makes the output more readable
     time.sleep(0.03)

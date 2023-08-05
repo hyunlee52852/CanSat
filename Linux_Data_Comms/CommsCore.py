@@ -36,13 +36,21 @@ packet = {"MSG_ID":None,
           "Timestamp":None,
           "Module_Stat":None,
           "LiDAR_Dist":None,
+          "BerryIMU_Accel":(0, 0, 0),
+          "BerryIMU_Gyro":(0, 0, 0),
           "Packet_Count":1
           }
 
 def addpacketdata(moduleno, data):
     if moduleno == 0: # LiDAR 센서의 경우
-        logdata('add')
         packet['LiDAR_Dist'] = data
+    elif moduleno == 1: # BerryGPS_IMU Accel, Gyro 의 경우
+        # BerryGPS 데이터는 ,(콤마) 를 기준으로 6개의 데이터가 들어옴
+        # 데이터 형식 >>> 가속도X,가속도Y,가속도Z,자이로X,자이로Y,자이로Z
+        splitdata = data.split(',')
+        packet['BerryIMU_Accel'] = (splitdata[0], splitdata[1], splitdata[2])
+        packet['BerryIMU_Gyro'] = (splitdata[3], splitdata[4], splitdata[5])
+                
 
 def sendpacket(): # 패킷을 보내는 코드
     while True:
@@ -50,7 +58,13 @@ def sendpacket(): # 패킷을 보내는 코드
         for i in module_active:
             packet['Module_Stat'] += str(i)
         curtime = datetime.today().isoformat(sep=' ', timespec='milliseconds')
-        sendstr = f"/*{packet['Packet_Count']},{curtime},{packet['Module_Stat']},{packet['LiDAR_Dist']}*/" # 지상국에 보낼 메세지
+        #sendstr = f"/*{packet['Packet_Count']},{curtime},{packet['Module_Stat']},{packet['LiDAR_Dist']}*/" # 지상국에 보낼 메세지
+        sendstr = "/*" # 지상국 데이터 시작 표시
+        sendstr += f"{packet['Packet_Count']},{curtime},{packet['Module_Stat']}," # 지상국 기본 데이터 추가
+        sendstr += f"{packet['LiDAR_Dist']}," # 라이다 센서 데이터 추가
+        sendstr += f"{packet['BerryIMU_Accel'][0]},{packet['BerryIMU_Accel'][1]},{packet['BerryIMU_Accel'][2]}," # BerryGPS Accel 값 추가
+        sendstr += f"{packet['BerryIMU_Gyro'][0]},{packet['BerryIMU_Gyro'][1]},{packet['BerryIMU_Gyro'][2]}" # BerryGPS Gyro 값 추가
+        sendstr += "*/" # 지상국 데이터 끝 표시
         logdata(sendstr)
         packet['Packet_Count'] += 1
 
