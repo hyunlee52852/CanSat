@@ -3,16 +3,10 @@ import serial
 import pigpio
 import time
 import socket
+from bluedot.btcomm import BluetoothClient
 from _thread import *
 from datetime import datetime
 import RPi.GPIO as GPIO
-
-pin1 = 27
-pin2= 22
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(pin1, GPIO.OUT)
-GPIO.setup(pin2, GPIO.OUT)
 
 ################ Module의 기본 설정 데이터들 ################
 
@@ -27,7 +21,12 @@ except:
     pi.set_mode(RX,pigpio.INPUT)
 
 #pi.set_mode(RX, pigpio.INPUT)
-pi.bb_serial_read_open(RX, 115200)
+try :
+    pi.bb_serial_read_open(RX,115200)
+except:
+    print("Port already in use, Reinitalizing Port")
+    pi.bb_serial_read_close(RX)
+    pi.bb_serial_read_open(RX, 115200)
 
 MODULENAME = "LIDAR" # 모듈의 이름
 HOST = '127.0.0.1' # Main server의 주소
@@ -61,10 +60,31 @@ def send_data(data): # data는 string type으로 보내자!!!!
     client_socket.send(f'{MODULENO}{data}'.encode())
     logdata(f'sended {MODULENO}{data} to server')
 
+################### Bluetooth Comms ####################
+def data_received(data):
+    print(data)
+    if data == "2":
+        print("Motor on action!!!!!!")
+    elif data == "3":
+        print("Motor Error")
+print("Connecting to Bluetooth")
+btclient = BluetoothClient("raspberrypi", data_received)
+
+def send_bluetooth_data(data):
+    btclient.send(data)
 ############################### Module Code #################################
 
 def getTFminiData():
+  count = 0
+  flag = 0
   while True:
+    print(f'count : {count}')
+    if count >= 10:
+        print("Motor Activated!!!!")
+        send_bluetooth_data('1')
+        flag = 1
+        count = 0
+
     #print("#############")
     time.sleep(0.05)	#change the value if needed
     (count, recv) = pi.bb_serial_read(RX)
@@ -81,15 +101,11 @@ def getTFminiData():
             if distance <= 1200:
               send_data(distance)
               print(distance, strength)
-              if distance >= 20 and distance <= 100:
-                  GPIO.output(pin2, GPIO.HIGH)
-                  GPIO.output(pin1, GPIO.LOW)
-              elif  distance < 20:
-                  GPIO.output(pin2, GPIO.LOW)
-                  GPIO.output(pin1, GPIO.HIGH)
+              if distance >= 20 and distance <= 100 and flag == 0:
+                  count += 1
               else:
-                  GPIO.output(pin1, GPIO.LOW)
-                  GPIO.output(pin2, GPIO.LOW)
+                  count = 0
+
             #else:
               # raise ValueError('distance error: %d' % distance)
             #i = i + 9
@@ -99,8 +115,10 @@ if __name__ == '__main__':
     getTFminiData()
   except KeyboardInterrupt:
     print("Keyboard Interrupted!!!!!")
+  finally:
     pi.bb_serial_read_close(RX)
     pi.stop()
     client_socket.close()
     f.close()
     GPIO.cleanup()
+    btclient.disconnect()
