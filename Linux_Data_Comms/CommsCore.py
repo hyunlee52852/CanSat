@@ -50,7 +50,7 @@ def addpacketdata(moduleno, data):
         splitdata = data.split(',')
         packet['BerryIMU_Accel'] = (splitdata[0], splitdata[1], splitdata[2])
         packet['BerryIMU_Gyro'] = (splitdata[3], splitdata[4], splitdata[5])
-                
+
 
 def sendpacket(): # 패킷을 보내는 코드
     while True:
@@ -92,7 +92,7 @@ def threaded(client_socket, addr):
                 break
 
             logdata(f'>> Received from  + {addr[0]} : {addr[1]}, {data.decode()}')
-            addpacketdata(int(data.decode()[0]), int(data.decode()[1:]))
+            addpacketdata(int(data.decode()[0]), data.decode()[1:])
 
             # 서버에 접속한 클라이언트들에게 채팅 보내기
             # 메세지를 보낸 본인을 제외한 서버에 접속한 클라이언트에게 메세지 보내기

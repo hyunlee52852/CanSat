@@ -24,8 +24,6 @@ import datetime
 import os
 import socket
 
-
-
 sendcnt = 0 # 너무 데이터를 많이 보내서 보내는 주기 조절하기
 
 ################### Comms code ###################
@@ -42,6 +40,7 @@ client_socket.send(f'{MODULENO}'.encode()) ## 통신이 성사되면 모듈 번�
 print (f'>> Module {MODULENO} Connected!')
 
 def send_data(data): # data는 string type으로 보내자!!!!
+    print("sending...")
     client_socket.send(f'{MODULENO}{data}'.encode())
     logdata(f'sended {MODULENO}{data} to server')
 
@@ -49,7 +48,7 @@ def send_data(data): # data는 string type으로 보내자!!!!
 
 def logdata(text): # 데이터를 로깅할 때 사용
     try:
-        t = datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        t = datetime.datetime.today().isoformat(sep=' ', timespec='milliseconds')
         f.write(f'[{t}] {text}')
         f.write('\n')
     except:
@@ -447,14 +446,14 @@ while True:
     xms = round(xG / 9.8, 2) # X accel in m/s^2
     zms = round(zG / 9.8, 2) # Z accel in m/s^2
 
-    gyrooutX = round(gyroXangle, 2)
-    gyrooutY = round(gyroYangle, 2)
-    gyrooutZ = round(gyroZangle, 2)
+    gyrooutX = round(gyroXangle, 2) % 360
+    gyrooutY = round(gyroYangle, 2) % 360
+    gyrooutZ = round(gyroZangle, 2) % 360
     sendcnt += 1
     if sendcnt >= 30 : # 30 이면 > 0.9초마다
         print(f'Accel (m/s^2) >>> X : {xms} Y : {yms} Z : {zms}')
         print(f'Gyro (degrees) >>> X : {gyrooutX} Y : {gyrooutY} Z : {gyrooutZ}')
-        
+
         send_data(f'{xms},{yms},{zms},{gyrooutX},{gyrooutY},{gyrooutZ}')
 
         sendcnt = 0
