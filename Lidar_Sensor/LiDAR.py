@@ -75,15 +75,14 @@ def send_bluetooth_data(data):
 ############################### Module Code #################################
 
 def getTFminiData():
-  count = 0
+  lidarcnt = 0
   flag = 0
   while True:
-    print(f'count : {count}')
-    if count >= 10:
+    if lidarcnt >= 10:
         print("Motor Activated!!!!")
         send_bluetooth_data('1')
         flag = 1
-        count = 0
+        lidarcnt = 0
 
     #print("#############")
     time.sleep(0.05)	#change the value if needed
@@ -102,9 +101,9 @@ def getTFminiData():
               send_data(distance)
               print(distance, strength)
               if distance >= 20 and distance <= 100 and flag == 0:
-                  count += 1
+                  lidarcnt += 1
               else:
-                  count = 0
+                  lidarcnt = 0
 
             #else:
               # raise ValueError('distance error: %d' % distance)
