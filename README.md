@@ -1,4 +1,3 @@
-# CanSat
 <h1>🚀Team RPG🚀</h1>
 <h2>2023 KAIST CANSAT COMPETITION</h2>
 https://cansat.kaist.ac.kr/
