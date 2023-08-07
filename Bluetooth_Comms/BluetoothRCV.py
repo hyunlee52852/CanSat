@@ -2,7 +2,7 @@ irom bluetooth import *
 
 port = 3
 socket = BluetoothSocket(RFCOMM)
-socket.connect(("98:D3:51:FD:E4:0C", port))
+socket.connect(("B8:27:EB:C1:D4:9C", port))
 print("bluetooth connected!")
 
 try:
