@@ -8,6 +8,15 @@ from _thread import *
 from datetime import datetime
 import RPi.GPIO as GPIO
 
+# 2023 KAIST CANSAT Competition | Team RPG
+# LiDAR.py | Developed by Hyeon Lee
+# Credits : https://github.com/TFmini/TFmini-RaspberryPi for LiDAR Source Code
+
+MODULENAME = "LiDAR" # 모듈의 이름
+HOST = '127.0.0.1' # Main server의 주소
+PORT = 9999 # Main server과 연결할 포트
+MODULENO = 4 ## 모듈 번호에 알맞게 바꾸기
+
 ################ Module의 기본 설정 데이터들 ################
 
 RX = 23 # Raspi의 GPIO 23번포트를 사용한다
@@ -27,11 +36,6 @@ except:
     print("Port already in use, Reinitalizing Port")
     pi.bb_serial_read_close(RX)
     pi.bb_serial_read_open(RX, 115200)
-
-MODULENAME = "LIDAR" # 모듈의 이름
-HOST = '127.0.0.1' # Main server의 주소
-PORT = 9999 # Main server과 연결할 포트
-MODULENO = 0 ## 모듈 번호에 알맞게 바꾸기
 
 ################ Logging System ################
 

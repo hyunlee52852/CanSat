@@ -3,6 +3,47 @@
 import time
 import smbus
 import math
+from _thread import *
+from datetime import datetime
+import socket
+
+# 2023 KAIST CANSAT Competition | Team RPG
+# BerryIMU_BARO.py | Developed by Hyeon Lee
+# Credits : https://github.com/ozzmaker/BerryIMU/tree/master for BerryGPS CODE
+
+MODULENAME = "LiDAR" # 모듈의 이름
+HOST = '127.0.0.1' # Main server의 주소
+PORT = 9999 # Main server과 연결할 포트
+MODULENO = 4 ## 모듈 번호에 알맞게 바꾸기
+
+################ Logging System ################
+
+def logdata(text): # 데이터를 로깅할 때 사용
+    try:
+        t = datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        f.write(f'[{t}] {text}')
+        f.write('\n')
+    except:
+        print("An error has been generated while inserting log data")
+        return
+
+f = open(f'./{MODULENAME}.txt', 'a') # 로그를 저장할 파일을 오픈
+logdata("Log file generated")
+
+################################ Main Comms ##################################
+# 메인 서버와 통신을 시도한다
+client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+client_socket.connect((HOST, PORT))
+
+client_socket.send(f'{MODULENO}'.encode()) ## 통신이 성사되면 모듈 번호를 보낸다
+
+print (f'>> Module {MODULENO} Connected!')
+
+def send_data(data): # data는 string type으로 보내자!!!!
+    client_socket.send(f'{MODULENO}{data}'.encode())
+    logdata(f'sended {MODULENO}{data} to server')
+
+
 
 # define BMP388 Device I2C address
 
@@ -210,6 +251,5 @@ if __name__ == '__main__':
  bmp388 = BMP388()
  
  while True:
-  time.sleep(0.5)
   temperature,pressure,altitude = bmp388.get_temperature_and_pressure_and_altitude()
   print(' Temperature = %.1f Pressure = %.2f  Altitude =%.2f '%(temperature/100.0,pressure/100.0,altitude/100.0))

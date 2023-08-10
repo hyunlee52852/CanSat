@@ -4,6 +4,18 @@ import time
 import serial
 from datetime import datetime
 
+# 2023 KAIST CANSAT Competition | Team RPG
+# CommsCore.py | Developed by Hyeon Lee
+
+############# SCHEMETICS ############
+# MODULES
+# No | NAME | DESC
+# 0 -> CORE : 위성 중앙 시스템
+# 1 -> ACCEL_GYRO : 가속도계, 자이로스코프
+# 2 -> BARO : 기압고도계
+# 3 -> GPS : GPS 모듈
+# 4 -> LiDAR : LiDAR 센서
+
 ############## 모듈 기본 데이터 ###############
 
 MODULENAME = "CORE"
@@ -11,6 +23,7 @@ HOST = '127.0.0.1'
 PORT = 9999
 
 module_active = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+##### MODULE DESC #####
 
 ################ Logging System ################
 def logdata(text): # 데이터를 로깅할 때 사용
@@ -28,7 +41,7 @@ logdata("Log file generated")
 
 ############ Serial Communication #############
 
-ser = serial.Serial("/dev/serial0", 9600) # 지상국과의 통신을 위해 Serial port 지정
+ser = serial.Serial("/dev/serial0", 9600, rtscts=True) # 지상국과의 통신을 위해 Serial port 지정
 
 packet = {"MSG_ID":None,
           "SEQ":None,
@@ -42,14 +55,17 @@ packet = {"MSG_ID":None,
           }
 
 def addpacketdata(moduleno, data):
-    if moduleno == 0: # LiDAR 센서의 경우
-        packet['LiDAR_Dist'] = data
-    elif moduleno == 1: # BerryGPS_IMU Accel, Gyro 의 경우
+
+    if moduleno == 1: # BerryGPS_IMU Accel, Gyro 의 경우
         # BerryGPS 데이터는 ,(콤마) 를 기준으로 6개의 데이터가 들어옴
         # 데이터 형식 >>> 가속도X,가속도Y,가속도Z,자이로X,자이로Y,자이로Z
         splitdata = data.split(',')
         packet['BerryIMU_Accel'] = (splitdata[0], splitdata[1], splitdata[2])
         packet['BerryIMU_Gyro'] = (splitdata[3], splitdata[4], splitdata[5])
+    if moduleno == 2: # BerryGPS_IMU Barometer의 경우
+    if moduleno == 3: # BerryGPS_IMU GPS의 경우
+    if moduleno == 4: # LiDAR 센서의 경우
+        packet['LiDAR_Dist'] = data
 
 
 def sendpacket(): # 패킷을 보내는 코드
@@ -61,9 +77,11 @@ def sendpacket(): # 패킷을 보내는 코드
         #sendstr = f"/*{packet['Packet_Count']},{curtime},{packet['Module_Stat']},{packet['LiDAR_Dist']}*/" # 지상국에 보낼 메세지
         sendstr = "/*" # 지상국 데이터 시작 표시
         sendstr += f"{packet['Packet_Count']},{curtime},{packet['Module_Stat']}," # 지상국 기본 데이터 추가
-        sendstr += f"{packet['LiDAR_Dist']}," # 라이다 센서 데이터 추가
         sendstr += f"{packet['BerryIMU_Accel'][0]},{packet['BerryIMU_Accel'][1]},{packet['BerryIMU_Accel'][2]}," # BerryGPS Accel 값 추가
         sendstr += f"{packet['BerryIMU_Gyro'][0]},{packet['BerryIMU_Gyro'][1]},{packet['BerryIMU_Gyro'][2]}" # BerryGPS Gyro 값 추가
+        
+        
+        sendstr += f"{packet['LiDAR_Dist']}," # 라이다 센서 데이터 추가
         sendstr += "*/" # 지상국 데이터 끝 표시
         logdata(sendstr)
         packet['Packet_Count'] += 1
@@ -127,7 +145,7 @@ try:
     start_new_thread(sendpacket, ())
     while True:
         logdata('>> Wait')
-
+        
         client_socket, addr = server_socket.accept()
         client_sockets.append(client_socket)
         start_new_thread(threaded, (client_socket, addr))
