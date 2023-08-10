@@ -1,4 +1,4 @@
-irom bluetooth import *
+from bluetooth import *
 
 port = 3
 socket = BluetoothSocket(RFCOMM)
