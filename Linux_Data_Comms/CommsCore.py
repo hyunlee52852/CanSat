@@ -57,8 +57,12 @@ packet = {"MSG_ID":None,
           "Pressure" : None,
           "Altitiude": None,
 
-          "Packet_Count":1,
+          "GpsPos" : (0, 0, 0), # (lat, lon, alt) ... degrees
+          "GpsEtc" : (None, None, None, None, None), # {time},{epv},{ept},{speed},{climb}
+
           "LiDAR_Dist":None, # (dist) .. cm
+
+          "Packet_Count":1,
           }
 
 def addpacketdata(moduleno, data):
@@ -75,10 +79,12 @@ def addpacketdata(moduleno, data):
         packet["Pressure"] = splitdata[1]
         packet["Altitiude"] = splitdata[2]
     if moduleno == 3: # BerryGPS_IMU GPS의 경우
-        print("test")
+        splitdata = data.split(',')
+        packet["GpsPos"] = (splitdata[0], splitdata[1], splitdata[2])
+        packet["GpsEtc"] = (splitdata[3], splitdata[4], splitdata[5], splitdata[6], splitdata[7])
+
     if moduleno == 4: # LiDAR 센서의 경우
         packet['LiDAR_Dist'] = data
-
 
 def sendpacket(): # 패킷을 보내는 코드
     while True:
@@ -92,7 +98,8 @@ def sendpacket(): # 패킷을 보내는 코드
         sendstr += f"{packet['BerryIMU_Accel'][0]},{packet['BerryIMU_Accel'][1]},{packet['BerryIMU_Accel'][2]}," # BerryGPS Accel 값 추가
         sendstr += f"{packet['BerryIMU_Gyro'][0]},{packet['BerryIMU_Gyro'][1]},{packet['BerryIMU_Gyro'][2]}" # BerryGPS Gyro 값 추가
         sendstr += f"{packet['Temperature']},{packet['Pressure']},{packet['Altitiude']}" # BerryGPS Baro 값 추가
-        
+        sendstr += f"{packet['GpsPos'][0]},{packet['GpsPos'][1]},{packet['GpsPos'][2]}"
+        sendstr += f"{packet['GpsEtc'][0]},{packet['GpsEtc'][1]},{packet['GpsEtc'][2]},{packet['GpsEtc'][3]},{packet['GpsEtc'][4]},"
         sendstr += f"{packet['LiDAR_Dist']}," # 라이다 센서 데이터 추가
         sendstr += "*/" # 지상국 데이터 끝 표시
         logdata(sendstr)
@@ -121,7 +128,7 @@ def threaded(client_socket, addr):
                 module_active[moduleno] = 0 # 그 모듈의 연결이 끊겼음을 표시
                 break
 
-            logdata(f'>> Received from  + {addr[0]} : {addr[1]}, {data.decode()}')
+            #logdata(f'>> Received from  + {addr[0]} : {addr[1]}, {data.decode()}')
             addpacketdata(int(data.decode()[0]), data.decode()[1:])
 
             # 서버에 접속한 클라이언트들에게 채팅 보내기

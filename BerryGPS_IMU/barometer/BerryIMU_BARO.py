@@ -41,8 +41,7 @@ print (f'>> Module {MODULENO} Connected!')
 
 def send_data(data): # data는 string type으로 보내자!!!!
     client_socket.send(f'{MODULENO}{data}'.encode())
-    logdata(f'sended {MODULENO}{data} to server')
-
+    logdata(f'send {MODULENO}{data} to server')
 
 
 # define BMP388 Device I2C address
@@ -252,4 +251,5 @@ if __name__ == '__main__':
  
  while True:
   temperature,pressure,altitude = bmp388.get_temperature_and_pressure_and_altitude()
-  print(' Temperature = %.1f Pressure = %.2f  Altitude =%.2f '%(temperature/100.0,pressure/100.0,altitude/100.0))
+  send_data(f"{temperature},{pressure},{altitude}")
+  #print(' Temperature = %.1f Pressure = %.2f  Altitude =%.2f '%(temperature/100.0,pressure/100.0,altitude/100.0))

@@ -39,11 +39,10 @@ print (f'>> Module {MODULENO} Connected!')
 
 def send_data(data): # data는 string type으로 보내자!!!!
     client_socket.send(f'{MODULENO}{data}'.encode())
-    logdata(f'sended {MODULENO}{data} to server')
-
-
+    logdata(f'send {MODULENO}{data} to server')
 
 gpsd = gps(mode=WATCH_ENABLE|WATCH_NEWSTYLE)
+
 print('gps connected!')
 try:
     while True:
@@ -70,8 +69,9 @@ try:
             speed : {GPSspeed}
             climb : {GPSclimb}
             ''')
+            send_data(f"{GPSlat},{GPSlon},{GPSalt},{GPStime},{GPSepv},{GPSept},{GPSspeed},{GPSclimb}")
+            
         time.sleep(1)
-
 
 except KeyboardInterrupt:
     print("Keyboardinterrupt!!")

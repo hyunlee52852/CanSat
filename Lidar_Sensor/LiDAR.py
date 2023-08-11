@@ -62,7 +62,7 @@ print (f'>> Module {MODULENO} Connected!')
 
 def send_data(data): # data는 string type으로 보내자!!!!
     client_socket.send(f'{MODULENO}{data}'.encode())
-    logdata(f'sended {MODULENO}{data} to server')
+    logdata(f'send {MODULENO}{data} to server')
 
 ################### Bluetooth Comms ####################
 def data_received(data):
