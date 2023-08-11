@@ -14,7 +14,7 @@ from datetime import datetime
 # 0  | CORE       | 위성 중앙 시스템       | None
 # 1  | ACCEL_GYRO | 가속도계, 자이로스코프 | {xms},{yms},{zms},{gyrooutX},{gyrooutY},{gyrooutZ}
 # 2  | BARO       | 기압고도계             | {temperature},{pressure},{altitude}       
-# 3  | GPS        | GPS 모듈               | 
+# 3  | GPS        | GPS 모듈               | {lat},{lon},{alt},{time},{epv},{ept},{speed},{climb}
 # 4  | LiDAR      | LiDAR 센서             | {distance}      
 
 ############## 모듈 기본 데이터 ###############
@@ -49,11 +49,16 @@ packet = {"MSG_ID":None,
           "Length":None,
           "Timestamp":None,
           "Module_Stat":None,
-          "BerryIMU_Accel":(0, 0, 0),
-          "BerryIMU_Gyro":(0, 0, 0),
-          "BerryIMU_Baro":
+
+          "BerryIMU_Accel":(0, 0, 0), # (x,y,z) .. m/s^2
+          "BerryIMU_Gyro":(0, 0, 0), # (x,y,z) .. degrees
+
+          "Temperature" : None,
+          "Pressure" : None,
+          "Altitiude": None,
+
           "Packet_Count":1,
-          "LiDAR_Dist":None,
+          "LiDAR_Dist":None, # (dist) .. cm
           }
 
 def addpacketdata(moduleno, data):
@@ -65,6 +70,10 @@ def addpacketdata(moduleno, data):
         packet['BerryIMU_Accel'] = (splitdata[0], splitdata[1], splitdata[2])
         packet['BerryIMU_Gyro'] = (splitdata[3], splitdata[4], splitdata[5])
     if moduleno == 2: # BerryGPS_IMU Barometer의 경우
+        splitdata = data.split(',')
+        packet["Temperature"] = splitdata[0]
+        packet["Pressure"] = splitdata[1]
+        packet["Altitiude"] = splitdata[2]
     if moduleno == 3: # BerryGPS_IMU GPS의 경우
     if moduleno == 4: # LiDAR 센서의 경우
         packet['LiDAR_Dist'] = data
@@ -81,7 +90,7 @@ def sendpacket(): # 패킷을 보내는 코드
         sendstr += f"{packet['Packet_Count']},{curtime},{packet['Module_Stat']}," # 지상국 기본 데이터 추가
         sendstr += f"{packet['BerryIMU_Accel'][0]},{packet['BerryIMU_Accel'][1]},{packet['BerryIMU_Accel'][2]}," # BerryGPS Accel 값 추가
         sendstr += f"{packet['BerryIMU_Gyro'][0]},{packet['BerryIMU_Gyro'][1]},{packet['BerryIMU_Gyro'][2]}" # BerryGPS Gyro 값 추가
-        
+        sendstr += f"{packet['Temperature']},{packet['Pressure']},{packet['Altitiude']}" # BerryGPS Baro 값 추가
         
         sendstr += f"{packet['LiDAR_Dist']}," # 라이다 센서 데이터 추가
         sendstr += "*/" # 지상국 데이터 끝 표시
