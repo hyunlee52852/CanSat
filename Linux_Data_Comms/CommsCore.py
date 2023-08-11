@@ -75,6 +75,7 @@ def addpacketdata(moduleno, data):
         packet["Pressure"] = splitdata[1]
         packet["Altitiude"] = splitdata[2]
     if moduleno == 3: # BerryGPS_IMU GPS의 경우
+        print("test")
     if moduleno == 4: # LiDAR 센서의 경우
         packet['LiDAR_Dist'] = data
 
