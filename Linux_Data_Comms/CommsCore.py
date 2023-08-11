@@ -9,12 +9,13 @@ from datetime import datetime
 
 ############# SCHEMETICS ############
 # MODULES
-# No | NAME | DESC
-# 0 -> CORE : 위성 중앙 시스템
-# 1 -> ACCEL_GYRO : 가속도계, 자이로스코프
-# 2 -> BARO : 기압고도계
-# 3 -> GPS : GPS 모듈
-# 4 -> LiDAR : LiDAR 센서
+# No | NAME       | DESC                   | Data format
+# _______________________________________________________
+# 0  | CORE       | 위성 중앙 시스템       | None
+# 1  | ACCEL_GYRO | 가속도계, 자이로스코프 | {xms},{yms},{zms},{gyrooutX},{gyrooutY},{gyrooutZ}
+# 2  | BARO       | 기압고도계             | {temperature},{pressure},{altitude}       
+# 3  | GPS        | GPS 모듈               | 
+# 4  | LiDAR      | LiDAR 센서             | {distance}      
 
 ############## 모듈 기본 데이터 ###############
 
@@ -48,10 +49,11 @@ packet = {"MSG_ID":None,
           "Length":None,
           "Timestamp":None,
           "Module_Stat":None,
-          "LiDAR_Dist":None,
           "BerryIMU_Accel":(0, 0, 0),
           "BerryIMU_Gyro":(0, 0, 0),
-          "Packet_Count":1
+          "BerryIMU_Baro":
+          "Packet_Count":1,
+          "LiDAR_Dist":None,
           }
 
 def addpacketdata(moduleno, data):

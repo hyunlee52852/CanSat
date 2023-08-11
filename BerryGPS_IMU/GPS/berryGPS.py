@@ -1,5 +1,48 @@
 from gps import *
 import time
+from datetime import datetime
+import serial
+import socket
+from _thread import *
+
+# 2023 KAIST CANSAT Competition | Team RPG
+# BerryIMU_BARO.py | Developed by Hyeon Lee
+# Credits : https://github.com/ozzmaker/BerryIMU/tree/master for BerryGPS CODE
+
+MODULENAME = "BARO" # 모듈의 이름
+HOST = '127.0.0.1' # Main server의 주소
+PORT = 9999 # Main server과 연결할 포트
+MODULENO = 3 ## 모듈 번호에 알맞게 바꾸기
+
+################ Logging System ################
+
+def logdata(text): # 데이터를 로깅할 때 사용
+    try:
+        t = datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        f.write(f'[{t}] {text}')
+        f.write('\n')
+    except:
+        print("An error has been generated while inserting log data")
+        return
+
+f = open(f'./{MODULENAME}.txt', 'a') # 로그를 저장할 파일을 오픈
+logdata("Log file generated")
+
+################################ Main Comms ##################################
+# 메인 서버와 통신을 시도한다
+client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+client_socket.connect((HOST, PORT))
+
+client_socket.send(f'{MODULENO}'.encode()) ## 통신이 성사되면 모듈 번호를 보낸다
+
+print (f'>> Module {MODULENO} Connected!')
+
+def send_data(data): # data는 string type으로 보내자!!!!
+    client_socket.send(f'{MODULENO}{data}'.encode())
+    logdata(f'sended {MODULENO}{data} to server')
+
+
+
 gpsd = gps(mode=WATCH_ENABLE|WATCH_NEWSTYLE)
 print('gps connected!')
 try:

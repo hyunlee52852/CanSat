@@ -11,10 +11,10 @@ import socket
 # BerryIMU_BARO.py | Developed by Hyeon Lee
 # Credits : https://github.com/ozzmaker/BerryIMU/tree/master for BerryGPS CODE
 
-MODULENAME = "LiDAR" # 모듈의 이름
+MODULENAME = "BARO" # 모듈의 이름
 HOST = '127.0.0.1' # Main server의 주소
 PORT = 9999 # Main server과 연결할 포트
-MODULENO = 4 ## 모듈 번호에 알맞게 바꾸기
+MODULENO = 2 ## 모듈 번호에 알맞게 바꾸기
 
 ################ Logging System ################
 
