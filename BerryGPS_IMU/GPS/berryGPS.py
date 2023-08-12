@@ -47,9 +47,9 @@ print('gps connected!')
 try:
     while True:
         report = gpsd.next()
-        print(report)
+        #print(report)
         if report['class'] == 'TPV':
-            print('report is TPV')
+            #print('report is TPV')
             GPSlat = getattr(report, 'lat', 0.0)
             GPSlon = getattr(report, 'lon', 0.0)
             GPStime = getattr(report, 'time','')
@@ -70,7 +70,7 @@ try:
             climb : {GPSclimb}
             ''')
             send_data(f"{GPSlat},{GPSlon},{GPSalt},{GPStime},{GPSepv},{GPSept},{GPSspeed},{GPSclimb}")
-            
+
         time.sleep(1)
 
 except KeyboardInterrupt:
