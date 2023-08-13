@@ -6,6 +6,7 @@ from datetime import datetime
 
 # 2023 KAIST CANSAT Competition | Team RPG
 # CommsCore.py | Developed by Hyeon Lee
+# Credits : https://stickode.tistory.com/225 for Socket Communication
 
 ############# SCHEMETICS ############
 # MODULES
@@ -24,7 +25,6 @@ HOST = '127.0.0.1'
 PORT = 9999
 
 module_active = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-##### MODULE DESC #####
 
 ################ Logging System ################
 def logdata(text): # 데이터를 로깅할 때 사용
@@ -131,6 +131,15 @@ def threaded(client_socket, addr):
             #logdata(f'>> Received from  + {addr[0]} : {addr[1]}, {data.decode()}')
             addpacketdata(int(data.decode()[0]), data.decode()[1:])
 
+
+            ############# Cansat Mission Status check   #############
+            # Climb 값이 계속 음수면 낙하 상태라고 판단, LiDAR 줄 내리기, Flag 키기
+            # 그 후 LiDAR 데이터가 일정 거리 이내로 들어오면 SkyCrane 작동
+            # Uppermodule과는 Bluetooth로 통신
+
+            
+
+            ##########################################
             # 서버에 접속한 클라이언트들에게 채팅 보내기
             # 메세지를 보낸 본인을 제외한 서버에 접속한 클라이언트에게 메세지 보내기
             for client in client_sockets :

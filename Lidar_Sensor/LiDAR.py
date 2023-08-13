@@ -72,6 +72,7 @@ def data_received(data):
     elif data == "3":
         print("Motor Error")
 print("Connecting to Bluetooth")
+
 btclient = BluetoothClient("raspberrypi", data_received)
 
 def send_bluetooth_data(data):
@@ -125,4 +126,3 @@ if __name__ == '__main__':
     f.close()
     GPIO.cleanup()
     btclient.disconnect()
-    
