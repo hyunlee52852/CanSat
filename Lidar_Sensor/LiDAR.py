@@ -111,4 +111,3 @@ if __name__ == '__main__':
     client_socket.close()
     f.close()
     GPIO.cleanup()
-    btclient.disconnect()
