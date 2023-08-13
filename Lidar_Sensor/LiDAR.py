@@ -69,12 +69,6 @@ def getTFminiData():
   lidarcnt = 0
   flag = 0
   while True:
-    if lidarcnt >= 10:
-        print("Motor Activated!!!!")
-        send_bluetooth_data('1')
-        flag = 1
-        lidarcnt = 0
-
     #print("#############")
     time.sleep(0.05)	#change the value if needed
     (count, recv) = pi.bb_serial_read(RX)
@@ -91,11 +85,6 @@ def getTFminiData():
             if distance <= 1200:
               send_data(distance)
               print(distance, strength)
-              if distance >= 20 and distance <= 100 and flag == 0:
-                  lidarcnt += 1
-              else:
-                  lidarcnt = 0
-
             #else:
               # raise ValueError('distance error: %d' % distance)
             #i = i + 9
