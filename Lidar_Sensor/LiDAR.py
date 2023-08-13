@@ -3,7 +3,6 @@ import serial
 import pigpio
 import time
 import socket
-from bluedot.btcomm import BluetoothClient
 from _thread import *
 from datetime import datetime
 import RPi.GPIO as GPIO
@@ -19,7 +18,7 @@ MODULENO = 4 ## 모듈 번호에 알맞게 바꾸기
 
 ################ Module의 기본 설정 데이터들 ################
 
-RX = 23 # Raspi의 GPIO 23번포트를 사용한다
+RX = 1 # Raspi의 GPIO 1번포트를 사용한다
 
 pi = pigpio.pi()
 try:
@@ -64,19 +63,6 @@ def send_data(data): # data는 string type으로 보내자!!!!
     client_socket.send(f'{MODULENO}{data}'.encode())
     logdata(f'send {MODULENO}{data} to server')
 
-################### Bluetooth Comms ####################
-def data_received(data):
-    print(data)
-    if data == "2":
-        print("Motor on action!!!!!!")
-    elif data == "3":
-        print("Motor Error")
-print("Connecting to Bluetooth")
-
-btclient = BluetoothClient("raspberrypi", data_received)
-
-def send_bluetooth_data(data):
-    btclient.send(data)
 ############################### Module Code #################################
 
 def getTFminiData():
