@@ -125,3 +125,4 @@ if __name__ == '__main__':
     f.close()
     GPIO.cleanup()
     btclient.disconnect()
+    

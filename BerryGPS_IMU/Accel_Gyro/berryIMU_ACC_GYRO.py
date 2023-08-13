@@ -16,13 +16,13 @@
 #    http://ozzmaker.com/
 
 # 2023 KAIST CANSAT Competition | Team RPG
-# BerryIMU_BARO.py | Developed by Hyeon Lee
+# berryIMU_ACC_GYRO.py | Developed by Hyeon Lee
 # Credits : https://github.com/ozzmaker/BerryIMU/tree/master for BerryGPS CODE
 
-MODULENAME = "BARO" # 모듈의 이름
+MODULENAME = "ACC_GYRO" # 모듈의 이름
 HOST = '127.0.0.1' # Main server의 주소
 PORT = 9999 # Main server과 연결할 포트
-MODULENO = 2 ## 모듈 번호에 알맞게 바꾸기
+MODULENO = 1 ## 모듈 번호에 알맞게 바꾸기
 
 import sys
 import time
@@ -50,7 +50,7 @@ print (f'>> Module {MODULENO} Connected!')
 def send_data(data): # data는 string type으로 보내자!!!!
     print("sending...")
     client_socket.send(f'{MODULENO}{data}'.encode())
-    logdata(f'sended {MODULENO}{data} to server')
+    logdata(f'send {MODULENO}{data} to server')
 
 ################ Logging System ################
 
