@@ -56,7 +56,7 @@ def send_data(data): # data는 string type으로 보내자!!!!
 
 def logdata(text): # 데이터를 로깅할 때 사용
     try:
-        t = datetime.datetime.now().isoformat(sep=' ', timespec='milliseconds')
+        t = datetime.now().isoformat(sep=' ', timespec='milliseconds')
         f.write(f'[{t}] {text}')
         f.write('\n')
     except Exception as e:
@@ -231,7 +231,7 @@ oldXAccRawValue = 0
 oldYAccRawValue = 0
 oldZAccRawValue = 0
 
-a = datetime.datetime.now()
+a = datetime.now()
 
 
 
@@ -279,8 +279,8 @@ while True:
 
 
     ##Calculate loop Period(LP). How long between Gyro Reads
-    b = datetime.datetime.now() - a
-    a = datetime.datetime.now()
+    b = datetime.now() - a
+    a = datetime.now()
     LP = b.microseconds/(1000000*1.0)
     outputString = "Loop Time %5.2f " % ( LP )
 

@@ -5,7 +5,7 @@
 # Credits : https://github.com/martinohanlon/BlueDot for Bluetooth COMMS
 
 from bluedot.btcomm import BluetoothClient
-import datetime
+from datetime import datetime
 from time import sleep
 from signal import pause
 

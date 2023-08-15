@@ -15,7 +15,7 @@ MODULENAME = "MOTOR" # 모듈의 이름
 
 def logdata(text): # 데이터를 로깅할 때 사용
     try:
-        t = datetime.datetime.now().isoformat(sep=' ', timespec='milliseconds')
+        t = datetime.now().isoformat(sep=' ', timespec='milliseconds')
         f.write(f'[{t}] {text}')
         f.write('\n')
     except Exception as e:
