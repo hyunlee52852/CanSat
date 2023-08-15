@@ -172,9 +172,9 @@ def sendpacket(): # 패킷을 보내는 코드
         sendstr = "/*" # 지상국 데이터 시작 표시
         sendstr += f"{packet['Packet_Count']},{curtime},{packet['Module_Stat']}," # 지상국 기본 데이터 추가
         sendstr += f"{packet['BerryIMU_Accel'][0]},{packet['BerryIMU_Accel'][1]},{packet['BerryIMU_Accel'][2]}," # BerryGPS Accel 값 추가
-        sendstr += f"{packet['BerryIMU_Gyro'][0]},{packet['BerryIMU_Gyro'][1]},{packet['BerryIMU_Gyro'][2]}" # BerryGPS Gyro 값 추가
-        sendstr += f"{packet['Temperature']},{packet['Pressure']},{packet['Altitiude']}" # BerryGPS Baro 값 추가
-        sendstr += f"{packet['GpsPos'][0]},{packet['GpsPos'][1]},{packet['GpsPos'][2]}"
+        sendstr += f"{packet['BerryIMU_Gyro'][0]},{packet['BerryIMU_Gyro'][1]},{packet['BerryIMU_Gyro'][2]}," # BerryGPS Gyro 값 추가
+        sendstr += f"{packet['Temperature']},{packet['Pressure']},{packet['Altitiude']}," # BerryGPS Baro 값 추가
+        sendstr += f"{packet['GpsPos'][0]},{packet['GpsPos'][1]},{packet['GpsPos'][2]},"
         sendstr += f"{packet['GpsEtc'][0]},{packet['GpsEtc'][1]},{packet['GpsEtc'][2]},{packet['GpsEtc'][3]},{packet['GpsEtc'][4]},"
         sendstr += f"{packet['LiDAR_Dist']}," # 라이다 센서 데이터 추가
         sendstr += f"{SkycraneReleased},{SkycraneActivated}" # 스카이크래인이 작동했는지 확인
