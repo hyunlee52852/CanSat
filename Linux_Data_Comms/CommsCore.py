@@ -2,7 +2,7 @@ import socket
 from _thread import *
 import time
 import serial
-from datetime import datetime
+import datetime
 from bluedot.btcomm import BluetoothClient
 
 # 2023 KAIST CANSAT Competition | Team RPG

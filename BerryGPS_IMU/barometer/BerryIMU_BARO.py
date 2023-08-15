@@ -4,7 +4,7 @@ import time
 import smbus
 import math
 from _thread import *
-from datetime import datetime
+import datetime
 import socket
 
 # 2023 KAIST CANSAT Competition | Team RPG

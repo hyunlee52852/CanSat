@@ -4,7 +4,7 @@ import pigpio
 import time
 import socket
 from _thread import *
-from datetime import datetime
+import datetime
 import RPi.GPIO as GPIO
 
 # 2023 KAIST CANSAT Competition | Team RPG

@@ -1,6 +1,6 @@
 from gps import *
 import time
-from datetime import datetime
+import datetime
 import serial
 import socket
 from _thread import *

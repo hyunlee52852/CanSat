@@ -3,7 +3,7 @@ import time
 #!/usr/bin/env python3
 from bluedot.btcomm import BluetoothServer
 from signal import pause
-from datetime import datetime
+import datetime
 
 # 2023 KAIST CANSAT Competition | Team RPG
 # MotorRun.py | Developed by Hyeon Lee
