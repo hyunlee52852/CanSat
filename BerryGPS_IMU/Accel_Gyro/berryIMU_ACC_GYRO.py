@@ -48,7 +48,7 @@ client_socket.send(f'{MODULENO}'.encode()) ## 통신이 성사되면 모듈 번�
 print (f'>> Module {MODULENO} Connected!')
 
 def send_data(data): # data는 string type으로 보내자!!!!
-    print("sending...")
+    #print("sending...")
     client_socket.send(f'{MODULENO}{data}'.encode())
     logdata(f'send {MODULENO}{data} to server')
 
@@ -78,8 +78,8 @@ gyrooutZ = 0
 
 def send_on_period():
     while True:
-        print(f'Accel (m/s^2) >>> X : {xms} Y : {yms} Z : {zms}')
-        print(f'Gyro (degrees) >>> X : {gyrooutX} Y : {gyrooutY} Z : {gyrooutZ}')
+        #print(f'Accel (m/s^2) >>> X : {xms} Y : {yms} Z : {zms}')
+        #print(f'Gyro (degrees) >>> X : {gyrooutX} Y : {gyrooutY} Z : {gyrooutZ}')
 
         send_data(f'{xms},{yms},{zms},{gyrooutX},{gyrooutY},{gyrooutZ}')
         time.sleep(0.1)
