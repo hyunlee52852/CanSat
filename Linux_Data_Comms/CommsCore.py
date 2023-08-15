@@ -123,7 +123,7 @@ packet = {"MSG_ID":None,
           "BerryIMU_Gyro":(0, 0, 0), # (x,y,z) .. degrees
 
           "Temperature" : None,
-          "Pressure" : None,
+          "Pressure" : None, # atm
           "Altitiude": None,
 
           "GpsPos" : (0, 0, 0), # (lat, lon, alt) ... degrees
