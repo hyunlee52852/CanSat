@@ -3,12 +3,13 @@ from _thread import *
 import time
 import serial
 from datetime import datetime
+from bluedot.btcomm import BluetoothClient
 
 # 2023 KAIST CANSAT Competition | Team RPG
 # CommsCore.py | Developed by Hyeon Lee
 # Credits : https://stickode.tistory.com/225 for Socket Communication
 
-############# SCHEMETICS ############
+############# SCHEMATICS ############
 # MODULES
 # No | NAME       | DESC                   | Data format
 # _______________________________________________________
@@ -26,6 +27,21 @@ PORT = 9999
 
 module_active = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
+
+############## MISSION CRITICAL DATA ##############
+
+SkycraneReleased = 0 # Skycrane이 풀렸는지 체크 // 0 = False, 1 = True
+SkycraneActivated = 0 # Skycrane이 다시 감겼는지 체크 // 0 = False, 1 = True
+
+DeployFlagCNT = 0
+SkycraneCNT = 0
+
+CurAccel = 0 # 현재 가속도 값 // 단위 : m/s^2
+CurLiDARDistance = 1300 # 현재 LiDAR 거리 값
+
+DEPLOYED_ACCEL = -0.1 # 위성이 Deploy 상태라고 가정하는 낙하 가속도
+SKYCRANE_ACTIVATE_HEIGHT = 200 # Skycrane이 작동하는 LiDAR 센서 상의 거리 / 단위 : cm
+
 ################ Logging System ################
 def logdata(text): # 데이터를 로깅할 때 사용
     try:
@@ -39,6 +55,54 @@ def logdata(text): # 데이터를 로깅할 때 사용
 
 f = open(f'./{MODULENAME}.txt', 'a') # 로그를 저장할 파일을 오픈
 logdata("Log file generated")
+
+############ Bluetooth Comms ###########
+
+print("Connecting to Bluetooth")
+def data_received(data):
+    logdata(f"recv - {data} from bluetooth")
+
+try:
+    c = BluetoothClient("raspberrypi", data_received)
+    logdata("Bluetooth Connected")
+except:
+    logdata("An Error happened while connecting to bluetooth")
+
+def sendbluetoothdata(data):
+    try:
+        c.send(data)
+        logdata(f"{data} sent to bluetooth")
+    except:
+        logdata(f"error happened while sending {data} to bluetooth")
+
+############# Mission Code #############
+
+def CheckDeployStatus(): # 위성이 분리되어있는지 판단하는 부분
+    if CurAccel <= DEPLOYED_ACCEL:
+        if SkycraneReleased == 0:
+            DeployFlagCNT += 1
+    elif DeployFlagCNT > 1:
+        DeployFlagCNT -= 2
+    elif DeployFlagCNT == 1:
+        DeployFlagCNT -= 1
+
+    if DeployFlagCNT >= 10: # 0.1 초마다 한번 /// 1초 연속으로 아래로 가속될경우 // Deploy 된 상태라고 가정
+        SkycraneReleased = 1
+        logdata("Cansat Deployed, Releasing Skycrane")
+        sendbluetoothdata("0") # 위쪽 모듈에 0이라는 데이터 전송
+
+def CheckSkycraneActivate(): # SkyCrane이 작동하는지 판단하는 부분
+    if CurLiDARDistance < SKYCRANE_ACTIVATE_HEIGHT and SkycraneReleased == 1 and SkycraneActivated == 0:
+        SkycraneCNT += 1
+    elif SkycraneCNT > 1:
+        SkycraneCNT -= 2
+    elif SkycraneCNT == 1:
+        SkycraneCNT -= 1
+
+    if SkycraneCNT >= 5: # 0.25초동안 LiDAR 센서 거리가 임계값보다 작아질경우
+        SkycraneActivated = 1
+        logdata("Skycrane Activated")
+        sendbluetoothdata("1") # 위쪽 모듈에 1이라는 데이터 전송
 
 ############ Serial Communication #############
 
@@ -73,18 +137,25 @@ def addpacketdata(moduleno, data):
         splitdata = data.split(',')
         packet['BerryIMU_Accel'] = (splitdata[0], splitdata[1], splitdata[2])
         packet['BerryIMU_Gyro'] = (splitdata[3], splitdata[4], splitdata[5])
+        CheckDeployStatus()
+
     if moduleno == 2: # BerryGPS_IMU Barometer의 경우
         splitdata = data.split(',')
         packet["Temperature"] = splitdata[0]
         packet["Pressure"] = splitdata[1]
         packet["Altitiude"] = splitdata[2]
+
     if moduleno == 3: # BerryGPS_IMU GPS의 경우
         splitdata = data.split(',')
         packet["GpsPos"] = (splitdata[0], splitdata[1], splitdata[2])
         packet["GpsEtc"] = (splitdata[3], splitdata[4], splitdata[5], splitdata[6], splitdata[7])
+        MAXHeight = max(MAXHeight, splitdata[2]) # 현재까지의 최대 고도를 측정, 만약 GPS 고도 데이터가 정확하지 않다면 기압고도계를 사용할 것
+        CurClimbDATA = splitdata[7] # 현재 낙하 속도
 
     if moduleno == 4: # LiDAR 센서의 경우
         packet['LiDAR_Dist'] = data
+        CurLiDARDistance = data # 현재 라이다 센서에 잡히는 거리
+        CheckSkycraneActivate()
 
 def sendpacket(): # 패킷을 보내는 코드
     while True:
@@ -107,7 +178,7 @@ def sendpacket(): # 패킷을 보내는 코드
 
         ser.write(sendstr.encode()) # 지상국에 serial 보내기
 
-        time.sleep(0.5)
+        time.sleep(1) # 패킷을 보내는 주기
 
 ##################################################
 
@@ -132,12 +203,12 @@ def threaded(client_socket, addr):
             addpacketdata(int(data.decode()[0]), data.decode()[1:])
 
 
-            ############# Cansat Mission Status check   #############
+            ############# Cansat Mission Status check #############
             # Climb 값이 계속 음수면 낙하 상태라고 판단, LiDAR 줄 내리기, Flag 키기
             # 그 후 LiDAR 데이터가 일정 거리 이내로 들어오면 SkyCrane 작동
             # Uppermodule과는 Bluetooth로 통신
 
-            
+
 
             ##########################################
             # 서버에 접속한 클라이언트들에게 채팅 보내기
@@ -184,6 +255,7 @@ except Exception as e :
 
 finally:
     server_socket.close()
+    c.disconnect()
 
 # 쓰레드에서 실행되는 코드입니다.
 # 접속한 클라이언트마다 새로운 쓰레드가 생성되어 통신을 하게 됩니다.

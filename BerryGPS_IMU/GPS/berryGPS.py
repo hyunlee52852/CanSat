@@ -50,14 +50,14 @@ try:
         #print(report)
         if report['class'] == 'TPV':
             #print('report is TPV')
-            GPSlat = getattr(report, 'lat', 0.0)
-            GPSlon = getattr(report, 'lon', 0.0)
-            GPStime = getattr(report, 'time','')
-            GPSalt = getattr(report, 'alt','nan')
-            GPSepv = getattr(report, 'epv','nan')
-            GPSept = getattr(report, 'ept','nan')
-            GPSspeed = getattr(report, 'speed','nan')
-            GPSclimb = getattr(report, 'climb','nan')
+            GPSlat = round(getattr(report, 'lat', 0.0), 2)
+            GPSlon = round(getattr(report, 'lon', 0.0), 2)
+            GPStime = round(getattr(report, 'time',''), 2)
+            GPSalt = round(getattr(report, 'alt','nan'), 2)
+            GPSepv = round(getattr(report, 'epv','nan'), 2)
+            GPSept = round(getattr(report, 'ept','nan'), 2)
+            GPSspeed = round(getattr(report, 'speed','nan'), 2)
+            GPSclimb = round(getattr(report, 'climb','nan'), 2)
 
             print(f'''
             lat : {GPSlat}

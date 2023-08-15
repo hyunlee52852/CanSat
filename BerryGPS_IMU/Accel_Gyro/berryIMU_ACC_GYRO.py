@@ -77,11 +77,11 @@ gyrooutZ = 0
 
 def send_on_period():
     while True:
-        time.sleep(0.5)
         print(f'Accel (m/s^2) >>> X : {xms} Y : {yms} Z : {zms}')
         print(f'Gyro (degrees) >>> X : {gyrooutX} Y : {gyrooutY} Z : {gyrooutZ}')
 
         send_data(f'{xms},{yms},{zms},{gyrooutX},{gyrooutY},{gyrooutZ}')
+        time.sleep(0.1)
 
 
 ##################################
