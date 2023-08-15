@@ -37,6 +37,8 @@ pin2 = 27 # In2 port on Relay
 
 GPIO.setup(pin1, GPIO.OUT)
 GPIO.setup(pin2, GPIO.OUT)
+GPIO.output(pin2, GPIO.LOW)
+GPIO.output(pin1, GPIO.LOW)
 
 def PullMotor():
     logdata("MOTOR PULLED")
