@@ -3,7 +3,7 @@ import time
 #!/usr/bin/env python3
 from bluedot.btcomm import BluetoothServer
 from signal import pause
-import datetime
+from datetime import datetime
 
 # 2023 KAIST CANSAT Competition | Team RPG
 # MotorRun.py | Developed by Hyeon Lee
@@ -15,7 +15,7 @@ MODULENAME = "MOTOR" # 모듈의 이름
 
 def logdata(text): # 데이터를 로깅할 때 사용
     try:
-        t = datetime.datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        t = datetime.datetime.now().isoformat(sep=' ', timespec='milliseconds')
         f.write(f'[{t}] {text}')
         f.write('\n')
     except Exception as e:

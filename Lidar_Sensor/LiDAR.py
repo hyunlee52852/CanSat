@@ -4,7 +4,7 @@ import pigpio
 import time
 import socket
 from _thread import *
-import datetime
+from datetime import datetime
 import RPi.GPIO as GPIO
 
 # 2023 KAIST CANSAT Competition | Team RPG
@@ -40,7 +40,7 @@ except:
 
 def logdata(text): # 데이터를 로깅할 때 사용
     try:
-        t = datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        t = datetime.now().isoformat(sep=' ', timespec='milliseconds')
         f.write(f'[{t}] {text}')
         f.write('\n')
     except:

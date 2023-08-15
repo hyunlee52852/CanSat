@@ -2,7 +2,7 @@ import socket
 from _thread import *
 import time
 import serial
-import datetime
+from datetime import datetime
 from bluedot.btcomm import BluetoothClient
 
 # 2023 KAIST CANSAT Competition | Team RPG
@@ -45,7 +45,7 @@ SKYCRANE_ACTIVATE_HEIGHT = 200 # Skycrane이 작동하는 LiDAR 센서 상의 �
 ################ Logging System ################
 def logdata(text): # 데이터를 로깅할 때 사용
     try:
-        t = datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        t = datetime.now().isoformat(sep=' ', timespec='milliseconds')
         f.write(f'[{t}] {text}')
         f.write('\n')
         print(f'[{t}] {text}')
@@ -163,7 +163,7 @@ def sendpacket(): # 패킷을 보내는 코드
         packet['Module_Stat'] = ''
         for i in module_active:
             packet['Module_Stat'] += str(i)
-        curtime = datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        curtime = datetime.now().isoformat(sep=' ', timespec='milliseconds')
         #sendstr = f"/*{packet['Packet_Count']},{curtime},{packet['Module_Stat']},{packet['LiDAR_Dist']}*/" # 지상국에 보낼 메세지
         sendstr = "/*" # 지상국 데이터 시작 표시
         sendstr += f"{packet['Packet_Count']},{curtime},{packet['Module_Stat']}," # 지상국 기본 데이터 추가
