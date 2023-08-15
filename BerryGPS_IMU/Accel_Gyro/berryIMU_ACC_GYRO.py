@@ -28,7 +28,7 @@ import sys
 import time
 import math
 import IMU
-import datetime
+from datetime import datetime
 import os
 import socket
 from _thread import *
@@ -56,7 +56,7 @@ def send_data(data): # data는 string type으로 보내자!!!!
 
 def logdata(text): # 데이터를 로깅할 때 사용
     try:
-        t = datetime.datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        t = datetime.datetime.now().isoformat(sep=' ', timespec='milliseconds')
         f.write(f'[{t}] {text}')
         f.write('\n')
     except Exception as e:

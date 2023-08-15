@@ -1,6 +1,6 @@
 from gps import *
 import time
-import datetime
+from datetime import datetime
 import serial
 import socket
 from _thread import *
@@ -18,7 +18,7 @@ MODULENO = 3 ## 모듈 번호에 알맞게 바꾸기
 
 def logdata(text): # 데이터를 로깅할 때 사용
     try:
-        t = datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        t = datetime.now().isoformat(sep=' ', timespec='milliseconds')
         f.write(f'[{t}] {text}')
         f.write('\n')
     except Exception as e:

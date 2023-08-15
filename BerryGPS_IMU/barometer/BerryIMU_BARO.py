@@ -4,7 +4,7 @@ import time
 import smbus
 import math
 from _thread import *
-import datetime
+from datetime import datetime
 import socket
 
 # 2023 KAIST CANSAT Competition | Team RPG
@@ -20,7 +20,7 @@ MODULENO = 2 ## 모듈 번호에 알맞게 바꾸기
 
 def logdata(text): # 데이터를 로깅할 때 사용
     try:
-        t = datetime.today().isoformat(sep=' ', timespec='milliseconds')
+        t = datetime.now().isoformat(sep=' ', timespec='milliseconds')
         f.write(f'[{t}] {text}')
         f.write('\n')
     except Exception as e:
