@@ -29,6 +29,7 @@ module_active = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
 ############## MISSION CRITICAL DATA ##############
+PACKET_SEND_PERIOD = 5 # 패킷이 전송되는 주기 // 단위 : 초
 
 SkycraneReleased = 0 # Skycrane이 풀렸는지 체크 // 0 = False, 1 = True
 SkycraneActivated = 0 # Skycrane이 다시 감겼는지 체크 // 0 = False, 1 = True
@@ -79,9 +80,11 @@ def sendbluetoothdata(data):
 ############# Mission Code #############
 
 def CheckDeployStatus(): # 위성이 분리되어있는지 판단하는 부분
+    global DeployFlagCNT
     if CurAccel <= DEPLOYED_ACCEL:
         if SkycraneReleased == 0:
             DeployFlagCNT += 1
+    
     elif DeployFlagCNT > 1:
         DeployFlagCNT -= 2
     elif DeployFlagCNT == 1:
@@ -93,6 +96,7 @@ def CheckDeployStatus(): # 위성이 분리되어있는지 판단하는 부분
         sendbluetoothdata("0") # 위쪽 모듈에 0이라는 데이터 전송
 
 def CheckSkycraneActivate(): # SkyCrane이 작동하는지 판단하는 부분
+    global SkycraneCNT
     if CurLiDARDistance < SKYCRANE_ACTIVATE_HEIGHT and SkycraneReleased == 1 and SkycraneActivated == 0:
         SkycraneCNT += 1
     elif SkycraneCNT > 1:
@@ -173,13 +177,14 @@ def sendpacket(): # 패킷을 보내는 코드
         sendstr += f"{packet['GpsPos'][0]},{packet['GpsPos'][1]},{packet['GpsPos'][2]}"
         sendstr += f"{packet['GpsEtc'][0]},{packet['GpsEtc'][1]},{packet['GpsEtc'][2]},{packet['GpsEtc'][3]},{packet['GpsEtc'][4]},"
         sendstr += f"{packet['LiDAR_Dist']}," # 라이다 센서 데이터 추가
+        sendstr += f"{SkycraneReleased},{SkycraneActivated}" # 스카이크래인이 작동했는지 확인
         sendstr += "*/" # 지상국 데이터 끝 표시
         logdata(sendstr)
         packet['Packet_Count'] += 1
 
         ser.write(sendstr.encode()) # 지상국에 serial 보내기
 
-        time.sleep(1) # 패킷을 보내는 주기
+        time.sleep(PACKET_SEND_PERIOD) # 패킷을 보내는 주기
 
 ##################################################
 
