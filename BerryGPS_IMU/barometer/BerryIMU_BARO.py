@@ -245,12 +245,13 @@ class BMP388(object):
 if __name__ == '__main__':
 
  import time
- 
+
  print("BMP388 Test Program ...\n")
- 
+
  bmp388 = BMP388()
- 
+
  while True:
     temperature,pressure,altitude = bmp388.get_temperature_and_pressure_and_altitude()
-    send_data(f"{round(temperature, 2)},{round(pressure / 101325, 2)},{round(altitude, 2)}")
+    send_data(f"{round(temperature/100.0, 2)},{round((pressure / 101325)/100.0, 2)},{round(altitude/100.0, 2)}")
     #print(' Temperature = %.1f Pressure = %.2f  Altitude =%.2f '%(temperature/100.0,pressure/100.0,altitude/100.0))
+    time.sleep(1)
