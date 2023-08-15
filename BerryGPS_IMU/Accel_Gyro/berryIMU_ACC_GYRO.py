@@ -59,8 +59,9 @@ def logdata(text): # 데이터를 로깅할 때 사용
         t = datetime.datetime.today().isoformat(sep=' ', timespec='milliseconds')
         f.write(f'[{t}] {text}')
         f.write('\n')
-    except:
+    except Exception as e:
         print("An error has been generated while inserting log data")
+        print(f"Error : {e}")
         return
 
 f = open(f'./{MODULENAME}.txt', 'a') # 로그를 저장할 파일을 오픈

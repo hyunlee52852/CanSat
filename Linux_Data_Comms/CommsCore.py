@@ -49,8 +49,9 @@ def logdata(text): # 데이터를 로깅할 때 사용
         f.write(f'[{t}] {text}')
         f.write('\n')
         print(f'[{t}] {text}')
-    except:
+    except Exception as e:
         print("An error has been generated while inserting log data")
+        print(f"Error : {e}")
         return
 
 f = open(f'./{MODULENAME}.txt', 'a') # 로그를 저장할 파일을 오픈
