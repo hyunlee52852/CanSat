@@ -45,18 +45,21 @@ def PullMotor():
     logdata("MOTOR PULLED")
     GPIO.output(pin2, GPIO.HIGH)
     GPIO.output(pin1, GPIO.LOW)
-    time.sleep(0.5) # 당기는 시간
+    time.sleep(1) # 당기는 시간
     GPIO.output(pin2, GPIO.LOW)
     GPIO.output(pin1, GPIO.LOW)
 
 def ReleaseMotor():
-    time.sleep(5) # Deploy 된 상태에서 5초 기다린 다음에 줄 풀기
+    time.sleep(17) # Deploy 된 상태에서 17초 기다린 다음에 줄 풀기
     logdata("MOTOR RELEASED")
-    GPIO.output(pin1, GPIO.HIGH)
-    GPIO.output(pin2, GPIO.LOW)
-    time.sleep(0.5) # 줄을 푸는 시간
-    GPIO.output(pin2, GPIO.LOW)
-    GPIO.output(pin1, GPIO.LOW)
+    for i in range(15):
+        print("on")
+        GPIO.output(pin1, GPIO.HIGH)
+        GPIO.output(pin2, GPIO.LOW)
+        time.sleep(0.01)
+        GPIO.output(pin1, GPIO.LOW)
+        GPIO.output(pin2, GPIO.LOW)
+        time.sleep(0.15)
 
 def data_received(data):
     logdata("recv - {}".format(data))
