@@ -137,14 +137,14 @@ packet = {"MSG_ID":None,
 def addpacketdata(moduleno, data):
     global CurAccel
     global CurLiDARDistance
-    
+
     if moduleno == 1: # BerryGPS_IMU Accel, Gyro 의 경우
         # BerryGPS 데이터는 ,(콤마) 를 기준으로 6개의 데이터가 들어옴
         # 데이터 형식 >>> 가속도X,가속도Y,가속도Z,자이로X,자이로Y,자이로Z
         splitdata = data.split(',')
         packet['BerryIMU_Accel'] = (float(splitdata[0]), float(splitdata[1]), float(splitdata[2]))
         packet['BerryIMU_Gyro'] = (float(splitdata[3]), float(splitdata[4]), float(splitdata[5]))
-        CurAccel = float(splitdata[1])
+        CurAccel = float(splitdata[2])
         CheckDeployStatus()
 
     if moduleno == 2: # BerryGPS_IMU Barometer의 경우
