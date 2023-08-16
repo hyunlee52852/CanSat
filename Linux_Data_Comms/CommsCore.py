@@ -40,7 +40,7 @@ SkycraneCNT = 0
 CurAccel = 0 # 현재 가속도 값 // 단위 : m/s^2
 CurLiDARDistance = 1300 # 현재 LiDAR 거리 값
 
-DEPLOYED_ACCEL = 9.8 - 0.5 # 위성이 Deploy 상태라고 가정하는 낙하 가속도
+DEPLOYED_ACCEL = 9.8 - 0.1 # 위성이 Deploy 상태라고 가정하는 낙하 가속도
 SKYCRANE_ACTIVATE_HEIGHT = 200 # Skycrane이 작동하는 LiDAR 센서 상의 거리 / 단위 : cm
 
 ################ Logging System ################
@@ -81,6 +81,7 @@ def sendbluetoothdata(data):
 
 def CheckDeployStatus(): # 위성이 분리되어있는지 판단하는 부분
     global DeployFlagCNT
+    global SkycraneReleased
     print(f"DeployFlagCNT : {DeployFlagCNT}")
     if CurAccel <= DEPLOYED_ACCEL:
         if SkycraneReleased == 0:
@@ -98,6 +99,8 @@ def CheckDeployStatus(): # 위성이 분리되어있는지 판단하는 부분
 
 def CheckSkycraneActivate(): # SkyCrane이 작동하는지 판단하는 부분
     global SkycraneCNT
+    global SkycraneReleased
+    global SkycraneActivated
     if CurLiDARDistance < SKYCRANE_ACTIVATE_HEIGHT and SkycraneReleased == 1 and SkycraneActivated == 0:
         SkycraneCNT += 1
     elif SkycraneCNT > 1:
