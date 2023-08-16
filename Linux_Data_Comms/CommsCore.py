@@ -15,9 +15,9 @@ from bluedot.btcomm import BluetoothClient
 # _______________________________________________________
 # 0  | CORE       | 위성 중앙 시스템       | None
 # 1  | ACCEL_GYRO | 가속도계, 자이로스코프 | {xms},{yms},{zms},{gyrooutX},{gyrooutY},{gyrooutZ}
-# 2  | BARO       | 기압고도계             | {temperature},{pressure},{altitude}       
+# 2  | BARO       | 기압고도계             | {temperature},{pressure},{altitude}
 # 3  | GPS        | GPS 모듈               | {lat},{lon},{alt},{time},{epv},{ept},{speed},{climb}
-# 4  | LiDAR      | LiDAR 센서             | {distance}      
+# 4  | LiDAR      | LiDAR 센서             | {distance}
 
 ############## 모듈 기본 데이터 ###############
 
@@ -84,7 +84,7 @@ def CheckDeployStatus(): # 위성이 분리되어있는지 판단하는 부분
     if CurAccel <= DEPLOYED_ACCEL:
         if SkycraneReleased == 0:
             DeployFlagCNT += 1
-    
+
     elif DeployFlagCNT > 1:
         DeployFlagCNT -= 2
     elif DeployFlagCNT == 1:
@@ -111,7 +111,7 @@ def CheckSkycraneActivate(): # SkyCrane이 작동하는지 판단하는 부분
 
 ############ Serial Communication #############
 
-ser = serial.Serial("/dev/serial0", 9600, rtscts=True) # 지상국과의 통신을 위해 Serial port 지정
+ser = serial.Serial("/dev/serial0", 9600) # 지상국과의 통신을 위해 Serial port 지정
 
 packet = {"MSG_ID":None,
           "SEQ":None,
@@ -250,7 +250,7 @@ try:
     start_new_thread(sendpacket, ())
     while True:
         logdata('>> Wait')
-        
+
         client_socket, addr = server_socket.accept()
         client_sockets.append(client_socket)
         start_new_thread(threaded, (client_socket, addr))
