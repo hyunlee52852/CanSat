@@ -470,9 +470,9 @@ while True:
     xG = (ACCy * 0.244)/1000 # X accel in G (9.8m/s)
     zG = (ACCz * 0.244)/1000 # Z accel in G (9.8m/s)
     print(zG)
-    yms = round(yG / 9.8, 2) # Y accel in m/s^2
-    xms = round(xG / 9.8, 2) # X accel in m/s^2
-    zms = round(zG / 9.8, 2) # Z accel in m/s^2
+    yms = round(yG * 9.8, 2) # Y accel in m/s^2
+    xms = round(xG * 9.8, 2) # X accel in m/s^2
+    zms = round(zG * 9.8, 2) # Z accel in m/s^2
 
     gyrooutX = round(gyroXangle, 2) % 360
     gyrooutY = round(gyroYangle, 2) % 360
