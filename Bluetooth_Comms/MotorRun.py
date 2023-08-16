@@ -50,6 +50,7 @@ def PullMotor():
     GPIO.output(pin1, GPIO.LOW)
 
 def ReleaseMotor():
+    time.sleep(5) # Deploy 된 상태에서 5초 기다린 다음에 줄 풀기
     logdata("MOTOR RELEASED")
     GPIO.output(pin1, GPIO.HIGH)
     GPIO.output(pin2, GPIO.LOW)
