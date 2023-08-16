@@ -18,7 +18,8 @@ c = BluetoothClient("pi4", data_received)
 print("Sending")
 try:
     while True:
-        c.send("hi {} \n".format(str(datetime.now())))
+        senddata = input("send sth : ")
+        c.send(senddata)
         sleep(1)
 finally:
     c.disconnect()
