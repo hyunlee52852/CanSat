@@ -29,7 +29,7 @@ module_active = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
 ############## MISSION CRITICAL DATA ##############
-PACKET_SEND_PERIOD = 5 # 패킷이 전송되는 주기 // 단위 : 초
+PACKET_SEND_PERIOD = 1 # 패킷이 전송되는 주기 // 단위 : 초
 
 SkycraneReleased = 0 # Skycrane이 풀렸는지 체크 // 0 = False, 1 = True
 SkycraneActivated = 0 # Skycrane이 다시 감겼는지 체크 // 0 = False, 1 = True
@@ -135,31 +135,33 @@ packet = {"MSG_ID":None,
           }
 
 def addpacketdata(moduleno, data):
-
+    global CurAccel
+    global CurLiDARDistance
+    
     if moduleno == 1: # BerryGPS_IMU Accel, Gyro 의 경우
         # BerryGPS 데이터는 ,(콤마) 를 기준으로 6개의 데이터가 들어옴
         # 데이터 형식 >>> 가속도X,가속도Y,가속도Z,자이로X,자이로Y,자이로Z
         splitdata = data.split(',')
-        packet['BerryIMU_Accel'] = (splitdata[0], splitdata[1], splitdata[2])
-        packet['BerryIMU_Gyro'] = (splitdata[3], splitdata[4], splitdata[5])
+        packet['BerryIMU_Accel'] = (float(splitdata[0]), float(splitdata[1]), float(splitdata[2]))
+        packet['BerryIMU_Gyro'] = (float(splitdata[3]), float(splitdata[4]), float(splitdata[5]))
+        CurAccel = float(splitdata[1])
         CheckDeployStatus()
 
     if moduleno == 2: # BerryGPS_IMU Barometer의 경우
         splitdata = data.split(',')
-        packet["Temperature"] = splitdata[0]
-        packet["Pressure"] = splitdata[1]
-        packet["Altitiude"] = splitdata[2]
+        packet["Temperature"] = float(splitdata[0])
+        packet["Pressure"] = float(splitdata[1])
+        packet["Altitiude"] = float(splitdata[2])
 
     if moduleno == 3: # BerryGPS_IMU GPS의 경우
         splitdata = data.split(',')
-        packet["GpsPos"] = (splitdata[0], splitdata[1], splitdata[2])
+        packet["GpsPos"] = (float(splitdata[0]), float(splitdata[1]), float(splitdata[2]))
         packet["GpsEtc"] = (splitdata[3], splitdata[4], splitdata[5], splitdata[6], splitdata[7])
         MAXHeight = max(MAXHeight, splitdata[2]) # 현재까지의 최대 고도를 측정, 만약 GPS 고도 데이터가 정확하지 않다면 기압고도계를 사용할 것
-        CurClimbDATA = splitdata[7] # 현재 낙하 속도
 
     if moduleno == 4: # LiDAR 센서의 경우
-        packet['LiDAR_Dist'] = data
-        CurLiDARDistance = data # 현재 라이다 센서에 잡히는 거리
+        packet['LiDAR_Dist'] = int(data)
+        CurLiDARDistance = int(data) # 현재 라이다 센서에 잡히는 거리
         CheckSkycraneActivate()
 
 def sendpacket(): # 패킷을 보내는 코드
