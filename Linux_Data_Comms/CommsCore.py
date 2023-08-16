@@ -81,6 +81,7 @@ def sendbluetoothdata(data):
 
 def CheckDeployStatus(): # 위성이 분리되어있는지 판단하는 부분
     global DeployFlagCNT
+    print(f"DeployFlagCNT : {DeployFlagCNT}")
     if CurAccel <= DEPLOYED_ACCEL:
         if SkycraneReleased == 0:
             DeployFlagCNT += 1
