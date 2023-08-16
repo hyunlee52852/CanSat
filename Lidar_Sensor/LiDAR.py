@@ -18,7 +18,7 @@ MODULENO = 4 ## 모듈 번호에 알맞게 바꾸기
 
 ################ Module의 기본 설정 데이터들 ################
 
-RX = 17 # Raspi의 GPIO 1번포트를 사용한다
+RX = 23 # Raspi의 GPIO 1번포트를 사용한다
 
 pi = pigpio.pi()
 try:
