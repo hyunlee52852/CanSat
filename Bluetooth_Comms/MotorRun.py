@@ -53,7 +53,7 @@ def ReleaseMotor():
     logdata("MOTOR HOLDING")
     GPIO.output(pin2, GPIO.HIGH)
     GPIO.output(pin1, GPIO.LOW)
-    time.sleep(17) # Deploy 된 상태에서 17초 기다린 다음에 줄 풀기
+    time.sleep(10) # Deploy 된 상태에서 17초 기다린 다음에 줄 풀기
     logdata("MOTOR RELEASED")
     for i in range(15):
         print("on")
