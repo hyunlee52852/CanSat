@@ -40,7 +40,7 @@ SkycraneCNT = 0
 CurAccel = 0 # 현재 가속도 값 // 단위 : m/s^2
 CurLiDARDistance = 1300 # 현재 LiDAR 거리 값
 
-DEPLOYED_ACCEL = 9.8 + 3 # 위성이 Deploy 상태라고 가정하는 낙하 가속도
+DEPLOYED_ACCEL = 9.8 + 6.2 # 위성이 Deploy 상태라고 가정하는 낙하 가속도
 SKYCRANE_ACTIVATE_HEIGHT = 150 # Skycrane이 작동하는 LiDAR 센서 상의 거리 / 단위 : cm
 
 ################ Logging System ################
@@ -92,7 +92,7 @@ def CheckDeployStatus(): # 위성이 분리되어있는지 판단하는 부분
     elif DeployFlagCNT == 1:
         DeployFlagCNT -= 1
 
-    if DeployFlagCNT >= 10: # 0.1 초마다 한번 /// 1초 연속으로 아래로 가속될경우 // Deploy 된 상태라고 가정
+    if DeployFlagCNT >= 5: # 0.1 초마다 한번 /// 1초 연속으로 아래로 가속될경우 // Deploy 된 상태라고 가정
         SkycraneReleased = 1
         logdata("Cansat Deployed, Releasing Skycrane")
         sendbluetoothdata("0") # 위쪽 모듈에 0이라는 데이터 전송
