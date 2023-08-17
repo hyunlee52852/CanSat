@@ -50,7 +50,7 @@ try:
         report = gpsd.next()
         #print(report)
         if report['class'] == 'TPV':
-            #print('report is TPV')
+            print('report is TPV')
             GPSlat = round(getattr(report, 'lat', 0.0), 2)
             GPSlon = round(getattr(report, 'lon', 0.0), 2)
             GPStime = round(getattr(report, 'time',''), 2)
