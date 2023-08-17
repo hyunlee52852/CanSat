@@ -41,7 +41,7 @@ CurAccel = 0 # 현재 가속도 값 // 단위 : m/s^2
 CurLiDARDistance = 1300 # 현재 LiDAR 거리 값
 
 DEPLOYED_ACCEL = 9.8 - 7 # 위성이 Deploy 상태라고 가정하는 낙하 가속도
-SKYCRANE_ACTIVATE_HEIGHT = 200 # Skycrane이 작동하는 LiDAR 센서 상의 거리 / 단위 : cm
+SKYCRANE_ACTIVATE_HEIGHT = 150 # Skycrane이 작동하는 LiDAR 센서 상의 거리 / 단위 : cm
 
 ################ Logging System ################
 def logdata(text): # 데이터를 로깅할 때 사용
@@ -101,7 +101,7 @@ def CheckSkycraneActivate(): # SkyCrane이 작동하는지 판단하는 부분
     global SkycraneCNT
     global SkycraneReleased
     global SkycraneActivated
-    if CurLiDARDistance < SKYCRANE_ACTIVATE_HEIGHT and SkycraneReleased == 1 and SkycraneActivated == 0:
+    if CurLiDARDistance < SKYCRANE_ACTIVATE_HEIGHT and SkycraneReleased == 1 and SkycraneActivated == 0 and CurLiDARDistance >= 20: # 라이더 고도 제한 추가
         SkycraneCNT += 1
     elif SkycraneCNT > 1:
         SkycraneCNT -= 2
