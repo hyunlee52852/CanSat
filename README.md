@@ -6,6 +6,7 @@ https://cansat.kaist.ac.kr/
 
 1차 서류 평가 -> PASS   
 2차 서류 평가 -> PASS  
-Final -> 8/17
+Final -> DONE
+PFR : 8/24
 
 <h1>Go RPG, GO!!</h1>
